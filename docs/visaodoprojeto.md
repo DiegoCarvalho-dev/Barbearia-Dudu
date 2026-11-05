@@ -6,9 +6,10 @@ Criar uma vitrine digital para a Dudu Barber Shop, com foco em apresentar a marc
 
 ## Direção aprovada
 
-- Visual clássico e moderno, minimalista, organizado e de fácil leitura.
+- Home contemporâneo aprovado na terceira proposta visual: fundo preto com vermelho discreto, nome DUDU em destaque atrás do retrato, frase curta e tipografia editorial. O restante do site será revisto posteriormente.
 - Paleta: preto `#101010`, grafite `#1b1b1b`, branco quente `#f3efea`, cinza `#a8a39f` e vermelho `#c91822` como cor de destaque. As cores podem ser refinadas para garantir contraste.
-- Página inicial com nome em destaque à esquerda e espaço para uma futura foto do barbeiro, de lado e com os braços cruzados, à direita.
+- Página inicial com o retrato do dono integrado à tipografia; a imagem atual usa um recorte gerado por IA a partir da foto fornecida e pode ser trocada quando uma nova foto estiver disponível.
+- Prompt utilizado para o recorte: remover somente o fundo da fotografia fornecida e preservar rosto, expressão, proporções, braços cruzados, roupa e enquadramento, produzindo imagem com transparência e sem novos elementos. O recorte foi gerado pela ferramenta interna de imagens e salvo em `public/images/dudu-recorte.webp`.
 - Cada seção ocupa a altura da tela, inclusive no celular. O destaque mantém o efeito de foto fixa enquanto sai da tela, sem aumentar a altura do início. Em telas muito baixas, o conteúdo da seção pode ser rolado para permanecer acessível.
 - O retrato é enquadrado sem corte e o efeito respeita a preferência por movimento reduzido e telas móveis.
 - A imagem de referência aprovada é uma simulação. A fotografia enviada posteriormente foi adicionada à abertura do site.

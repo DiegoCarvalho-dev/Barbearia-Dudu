@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './style.css';
+import './home.css';
 
 // Fotografia principal; substitua o arquivo em /public/images quando necessário.
-const heroImage = '/images/dudu-home.webp';
+const heroImage = '/images/dudu-recorte.webp';
 // Número de demonstração. Substituir pelo número oficial antes da publicação final.
 const whatsapp = 'https://wa.me/5500000000000';
 
@@ -27,6 +28,10 @@ function Arrow({ diagonal = false }) {
 
 function WhatsAppIcon() {
   return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.4 11.8a8.4 8.4 0 0 1-12.5 7.3L3.6 20.3l1.2-4.1a8.4 8.4 0 1 1 15.6-4.4Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/><path d="M8.5 7.7c.2-.4.4-.4.7-.4h.3c.1 0 .3 0 .4.4l.6 1.4c.1.2.1.4 0 .5l-.5.6c-.1.1-.2.2-.1.4.3.6.8 1.1 1.3 1.6.6.5 1.2.9 1.9 1.2.2.1.3.1.4-.1l.7-.8c.1-.2.3-.2.5-.1l1.4.7c.2.1.4.2.4.4 0 .2-.1 1-.7 1.4-.5.4-1.1.5-1.7.3-1.1-.3-2.4-.9-3.8-2.2-1.1-1-2-2.3-2.3-3.5-.2-.7 0-1.3.5-1.8Z" fill="currentColor"/></svg>;
+}
+
+function BarberPole() {
+  return <svg className="brand-pole" viewBox="0 0 28 50" fill="none" aria-hidden="true"><path d="M9 7V5a5 5 0 0 1 10 0v2M9 43v2a5 5 0 0 0 10 0v-2M6 9h16M6 41h16M9 9h10a2 2 0 0 1 2 2v28a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2Z" stroke="currentColor" strokeWidth="1.5"/><path d="m8 21 12-10v7L8 28v-7Zm0 12 12-10v7L8 40v-7Z" fill="#b92732"/><path d="M8 21 20 11M8 28l12-10M8 33l12-10M8 40l12-10" stroke="currentColor" strokeWidth=".8"/></svg>;
 }
 
 function App() {
@@ -62,7 +67,7 @@ function App() {
     <a className="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header className="header">
       <a href="#inicio" className="brand" aria-label="Dudu Barber Shop, início" onClick={closeMenu}>
-        <span>DUDU</span><small>BARBER SHOP</small>
+        <BarberPole /><span className="brand-text"><span>DUDU</span><small>BARBER SHOP</small></span>
       </a>
       <button className="menu-toggle" aria-expanded={menuOpen} aria-controls="navigation" aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'} onClick={() => setMenuOpen(!menuOpen)}>
         <span></span><span></span>
@@ -79,19 +84,20 @@ function App() {
 
     <main id="conteudo">
       <section id="inicio" className="hero" aria-labelledby="hero-title" ref={heroRef}>
+        <div className="hero-word" aria-hidden="true">DUDU</div>
         <div className="hero-visual" aria-hidden="true">
           {heroImage ? <img className="hero-photo" src={heroImage} alt="" fetchPriority="high" /> : <div className="hero-placeholder"><span className="placeholder-ring"></span><span className="placeholder-letter">D</span><span className="placeholder-caption">DUDU / BARBER SHOP</span></div>}
         </div>
         <div className="hero-shade" aria-hidden="true"></div>
         <div className="hero-content wrap">
           <div className="hero-content-inner">
-            <p className="eyebrow"><span></span> SÃO JOSÉ DE MIPIBU · RN</p>
-            <h1 id="hero-title">DUDU<br />BARBER<br /><span>SHOP.</span></h1>
-            <p className="hero-copy">Uma história construída com dedicação, estilo e pessoas.</p>
-            <a className="button button-red" href="#historia">Conheça nossa história <Arrow diagonal /></a>
+            <p className="hero-kicker">DUDU BARBER SHOP <span>·</span> DESDE 2016</p>
+            <div className="hero-rule" aria-hidden="true"></div>
+            <h1 id="hero-title">Seu estilo,<br />nossa história.</h1>
+            <a className="button button-red hero-button" href="#historia">Conheça a barbearia <Arrow diagonal /></a>
           </div>
         </div>
-        <div className="hero-foot wrap"><span>BARBEARIA · DESDE 2016</span><a href="#historia">ROLE PARA CONHECER <span>↓</span></a></div>
+        <div className="hero-cities wrap" aria-label="Unidades no Rio Grande do Norte"><span className="city-pin" aria-hidden="true">●</span><span>São José de Mipibu</span><i aria-hidden="true"></i><span>Goianinha</span><i aria-hidden="true"></i><span>Nísia Floresta</span><span className="state">RN</span></div>
       </section>
 
       <section className="story section-light" id="historia">
