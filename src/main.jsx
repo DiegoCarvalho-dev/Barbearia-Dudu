@@ -59,10 +59,12 @@ function App() {
         </div>
         <div className="hero-shade" aria-hidden="true"></div>
         <div className="hero-content wrap">
-          <p className="eyebrow"><span></span> SÃO JOSÉ DE MIPIBU · RN</p>
-          <h1 id="hero-title">DUDU<br />BARBER<br /><span>SHOP.</span></h1>
-          <p className="hero-copy">Uma história construída com dedicação, estilo e pessoas.</p>
-          <a className="button button-red" href="#historia">Conheça nossa história <Arrow diagonal /></a>
+          <div className="hero-content-inner">
+            <p className="eyebrow"><span></span> SÃO JOSÉ DE MIPIBU · RN</p>
+            <h1 id="hero-title">DUDU<br />BARBER<br /><span>SHOP.</span></h1>
+            <p className="hero-copy">Uma história construída com dedicação, estilo e pessoas.</p>
+            <a className="button button-red" href="#historia">Conheça nossa história <Arrow diagonal /></a>
+          </div>
         </div>
         <div className="hero-foot wrap"><span>BARBEARIA · DESDE 2016</span><a href="#historia">ROLE PARA CONHECER <span>↓</span></a></div>
       </section>
