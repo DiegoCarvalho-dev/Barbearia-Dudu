@@ -45,8 +45,10 @@ function App() {
     let frame = 0;
     const update = () => {
       frame = 0;
-      const offset = motion.matches ? 0 : Math.max(0, Math.min(-hero.getBoundingClientRect().top, hero.offsetHeight));
+      const rect = hero.getBoundingClientRect();
+      const offset = motion.matches ? 0 : Math.max(0, Math.min(-rect.top, hero.offsetHeight));
       hero.style.setProperty('--hero-scroll', `${offset}px`);
+      hero.classList.toggle('is-in-view', rect.bottom > window.innerHeight * 0.15 && rect.top < window.innerHeight * 0.85);
     };
     const requestUpdate = () => {
       if (!frame) frame = window.requestAnimationFrame(update);
@@ -78,13 +80,12 @@ function App() {
         <a href="#servicos" onClick={closeMenu}>Serviços</a>
         <a href="#planos" onClick={closeMenu}>Planos</a>
         <a href="#unidades" onClick={closeMenu}>Unidades</a>
-        <a className="nav-contact" href={whatsapp} target="_blank" rel="noreferrer" onClick={closeMenu}>Fale com a gente <Arrow diagonal /></a>
       </nav>
     </header>
 
     <main id="conteudo">
       <section id="inicio" className="hero" aria-labelledby="hero-title" ref={heroRef}>
-        <div className="hero-word" aria-hidden="true">DUDU</div>
+        <div className="hero-word" aria-hidden="true"><span>DUDU</span></div>
         <div className="hero-visual" aria-hidden="true">
           {heroImage ? <img className="hero-photo" src={heroImage} alt="" fetchPriority="high" /> : <div className="hero-placeholder"><span className="placeholder-ring"></span><span className="placeholder-letter">D</span><span className="placeholder-caption">DUDU / BARBER SHOP</span></div>}
         </div>
@@ -93,7 +94,7 @@ function App() {
           <div className="hero-content-inner">
             <p className="hero-kicker">DUDU BARBER SHOP <span>·</span> DESDE 2016</p>
             <div className="hero-rule" aria-hidden="true"></div>
-            <h1 id="hero-title">Seu estilo,<br />nossa história.</h1>
+            <h1 id="hero-title"><span>Seu estilo,</span><span>nossa história.</span></h1>
             <a className="button button-red hero-button" href="#historia">Conheça a barbearia <Arrow diagonal /></a>
           </div>
         </div>
