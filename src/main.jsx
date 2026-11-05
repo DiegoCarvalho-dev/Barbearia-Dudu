@@ -116,9 +116,9 @@ function App() {
   return <>
     <a className="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header className="header">
-      <a href="#inicio" className="brand" aria-label="Dudu Barber Shop, início" onClick={closeMenu}>
+      <div className="brand">
         <BarberPole /><span className="brand-text"><span>DUDU</span><small>BARBER SHOP</small></span>
-      </a>
+      </div>
       <button className="menu-toggle" aria-expanded={menuOpen} aria-controls="navigation" aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'} onClick={() => setMenuOpen(!menuOpen)}>
         <span></span><span></span>
       </button>
