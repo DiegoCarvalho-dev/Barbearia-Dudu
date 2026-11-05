@@ -18,7 +18,7 @@ npm run preview
 
 ## Conteúdo pendente
 
-- **Foto principal:** a imagem enviada está em `public/images/dudu-home.webp` e é configurada pela constante `heroImage` em `src/main.jsx`. A composição do destaque mantém a imagem fixa durante a rolagem, respeitando a configuração de movimento reduzido.
+- **Foto principal:** a imagem otimizada está em `public/images/dudu-home.webp` e é configurada pela constante `heroImage` em `src/main.jsx`. O original está em `referencias/foto-home-original.jpg`. A composição do destaque mantém a imagem fixa durante a rolagem, respeitando a configuração de movimento reduzido.
 - **WhatsApp:** substitua o número fictício na constante `whatsapp` em `src/main.jsx` antes de divulgar o site.
 - **Planos:** confirme valores e condições com a barbearia. A referência não informa todos os detalhes.
 - **Equipe e unidades:** fotos, nomes, endereços e horários podem ser adicionados quando forem confirmados.
