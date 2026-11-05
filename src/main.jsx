@@ -37,7 +37,55 @@ function BarberPole() {
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const heroRef = useRef(null);
+  const scrollCleanupRef = useRef(null);
   const closeMenu = () => setMenuOpen(false);
+
+  useEffect(() => () => scrollCleanupRef.current?.(), []);
+
+  const scrollToStory = (event) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const target = document.getElementById('historia');
+    if (!target) return;
+    event.preventDefault();
+    scrollCleanupRef.current?.();
+
+    const start = window.scrollY;
+    const destination = Math.round(target.getBoundingClientRect().top + start);
+    if (window.location.hash !== '#historia') window.history.pushState(null, '', '#historia');
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || Math.abs(destination - start) < 2) {
+      window.scrollTo({ top: destination, behavior: 'instant' });
+      target.focus({ preventScroll: true });
+      return;
+    }
+
+    let frame = 0;
+    let startedAt;
+    const cleanup = () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('wheel', cancel);
+      window.removeEventListener('touchstart', cancel);
+      window.removeEventListener('keydown', cancelOnScrollKey);
+      scrollCleanupRef.current = null;
+    };
+    const cancel = () => cleanup();
+    const cancelOnScrollKey = (keyEvent) => {
+      if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(keyEvent.key)) cancel();
+    };
+    const step = (time) => {
+      if (startedAt === undefined) startedAt = time;
+      const progress = Math.min((time - startedAt) / 900, 1);
+      const eased = (1 - Math.cos(Math.PI * progress)) / 2;
+      window.scrollTo({ top: start + (destination - start) * eased, behavior: 'instant' });
+      if (progress < 1) frame = window.requestAnimationFrame(step);
+      else { cleanup(); target.focus({ preventScroll: true }); }
+    };
+    scrollCleanupRef.current = cleanup;
+    window.addEventListener('wheel', cancel, { passive: true });
+    window.addEventListener('touchstart', cancel, { passive: true });
+    window.addEventListener('keydown', cancelOnScrollKey);
+    frame = window.requestAnimationFrame(step);
+  };
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -95,13 +143,13 @@ function App() {
             <p className="hero-kicker">DUDU BARBER SHOP <span>·</span> DESDE 2016</p>
             <div className="hero-rule" aria-hidden="true"></div>
             <h1 id="hero-title"><span>Seu estilo,</span><span>nossa história.</span></h1>
-            <a className="button button-red hero-button" href="#historia">Conheça a barbearia <Arrow diagonal /></a>
+            <a className="button hero-button" href="#historia" onClick={scrollToStory}>Conheça a barbearia <span className="arrow" aria-hidden="true">↓</span></a>
           </div>
         </div>
         <div className="hero-cities wrap" aria-label="Unidades no Rio Grande do Norte"><span className="city-pin" aria-hidden="true">●</span><span>São José de Mipibu</span><i aria-hidden="true"></i><span>Goianinha</span><i aria-hidden="true"></i><span>Nísia Floresta</span><span className="state">RN</span></div>
       </section>
 
-      <section className="story section-light" id="historia">
+      <section className="story section-light" id="historia" tabIndex="-1">
         <div className="wrap story-grid">
           <div><p className="section-label"><span>01 /</span> NOSSA HISTÓRIA</p><h2>Uma história<br />feita <em>de perto.</em></h2></div>
           <div className="story-copy"><p className="lead">Tudo começou em 2016, com o sonho de construir o próprio negócio.</p><p>A Dudu Barber Shop nasceu do trabalho e da dedicação de um casal de jovens empreendedores. Ao longo da trajetória, a formação de novos barbeiros também passou a fazer parte dessa história.</p><p>Hoje, a marca está presente em São José de Mipibu, Nísia Floresta e Goianinha.</p><a className="text-link" href="https://www.instagram.com/dudu.barbershop01/" target="_blank" rel="noreferrer">ACOMPANHE NO INSTAGRAM <Arrow diagonal /></a></div>
