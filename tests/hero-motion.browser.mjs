@@ -108,7 +108,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
   });
 }
 
-for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 680, height: 900 }, { width: 768, height: 1024 }, { width: 1024, height: 768 }, { width: 568, height: 320 }]) {
+for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 430, height: 932 }, { width: 680, height: 900 }, { width: 768, height: 1024 }, { width: 1024, height: 768 }, { width: 568, height: 320 }]) {
   test(`composição do home em ${viewport.width}x${viewport.height}`, async () => {
     const { page, errors } = await openPage(viewport);
     try {
@@ -134,6 +134,39 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
       assert.equal(layout.buttonTextLines, 1, 'O texto do botão deve caber em uma linha.');
       if (viewport.width <= 640 && viewport.height > viewport.width) {
         assert.ok(layout.title.top >= layout.photo.bottom - 20, 'A chamada deve ficar abaixo da maior parte do retrato no celular.');
+      }
+      if (viewport.width <= 900 && viewport.height > viewport.width) {
+        const coverage = await page.evaluate(() => {
+          const photo = document.querySelector('.hero-photo');
+          const photoBox = photo.getBoundingClientRect();
+          const letters = document.querySelector('.hero-word span').firstChild;
+          const canvas = document.createElement('canvas');
+          canvas.width = photo.naturalWidth;
+          canvas.height = photo.naturalHeight;
+          const context = canvas.getContext('2d', { willReadFrequently: true });
+          context.drawImage(photo, 0, 0);
+          const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+          return [...letters.textContent].map((_, index) => {
+            const range = document.createRange();
+            range.setStart(letters, index);
+            range.setEnd(letters, index + 1);
+            const box = range.getBoundingClientRect();
+            let covered = 0;
+            let total = 0;
+            for (let y = box.top; y < box.bottom; y += 4) {
+              for (let x = box.left; x < box.right; x += 4) {
+                total++;
+                if (x < photoBox.left || x >= photoBox.right || y < photoBox.top || y >= photoBox.bottom) continue;
+                const px = Math.floor((x - photoBox.left) / photoBox.width * canvas.width);
+                const py = Math.floor((y - photoBox.top) / photoBox.height * canvas.height);
+                if (pixels[(py * canvas.width + px) * 4 + 3] > 128) covered++;
+              }
+            }
+            return covered / total;
+          });
+        });
+        assert.equal(coverage.filter((ratio) => ratio > 0.35).length, 1, `A cabeça deve cobrir principalmente uma letra: ${coverage}`);
+        assert.ok(coverage.filter((ratio) => ratio <= 0.35).every((ratio) => ratio < 0.3), `As outras letras devem continuar visíveis: ${coverage}`);
       }
       assert.deepEqual(errors, []);
     } finally { await page.close(); }

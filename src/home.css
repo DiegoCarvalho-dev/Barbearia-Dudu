@@ -130,3 +130,16 @@
 @media (max-width:640px) and (prefers-reduced-motion:reduce){
   .hero-word{transform:translateX(-50%)}
 }
+
+/* Em retrato, o nome maior fica à altura da cabeça, com o profissional à direita. */
+@media (max-width:640px) and (orientation:portrait){
+  .hero-word{top:clamp(104px,18svh,175px);font-size:min(38vw,172px)}
+  .hero-photo{left:60%}
+}
+@media (min-width:641px) and (max-width:900px) and (min-height:650px){
+  .hero-word{left:28%;top:33%;font-size:25vw}
+  .hero-photo{left:63%;height:min(72svh,700px)}
+}
+@media (min-width:901px) and (max-width:1100px), (min-width:641px) and (max-width:900px) and (max-height:649px){
+  .hero-word{top:32%}
+}
