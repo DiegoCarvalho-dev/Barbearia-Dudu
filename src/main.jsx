@@ -1,5 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { useHeroMotion } from './hooks/useHeroMotion.js';
+import { useStoryScroll } from './hooks/useStoryScroll.js';
 import './style.css';
 import './home.css';
 
@@ -36,82 +38,9 @@ function BarberPole() {
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const heroRef = useRef(null);
-  const scrollCleanupRef = useRef(null);
+  const heroRef = useHeroMotion();
+  const scrollToStory = useStoryScroll();
   const closeMenu = () => setMenuOpen(false);
-
-  useEffect(() => () => scrollCleanupRef.current?.(), []);
-
-  const scrollToStory = (event) => {
-    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    const target = document.getElementById('historia');
-    if (!target) return;
-    event.preventDefault();
-    scrollCleanupRef.current?.();
-
-    const start = window.scrollY;
-    const destination = Math.round(target.getBoundingClientRect().top + start);
-    if (window.location.hash !== '#historia') window.history.pushState(null, '', '#historia');
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || Math.abs(destination - start) < 2) {
-      window.scrollTo({ top: destination, behavior: 'instant' });
-      target.focus({ preventScroll: true });
-      return;
-    }
-
-    let frame = 0;
-    let startedAt;
-    const cleanup = () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener('wheel', cancel);
-      window.removeEventListener('touchstart', cancel);
-      window.removeEventListener('keydown', cancelOnScrollKey);
-      scrollCleanupRef.current = null;
-    };
-    const cancel = () => cleanup();
-    const cancelOnScrollKey = (keyEvent) => {
-      if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(keyEvent.key)) cancel();
-    };
-    const step = (time) => {
-      if (startedAt === undefined) startedAt = time;
-      const progress = Math.min((time - startedAt) / 900, 1);
-      const eased = (1 - Math.cos(Math.PI * progress)) / 2;
-      window.scrollTo({ top: start + (destination - start) * eased, behavior: 'instant' });
-      if (progress < 1) frame = window.requestAnimationFrame(step);
-      else { cleanup(); target.focus({ preventScroll: true }); }
-    };
-    scrollCleanupRef.current = cleanup;
-    window.addEventListener('wheel', cancel, { passive: true });
-    window.addEventListener('touchstart', cancel, { passive: true });
-    window.addEventListener('keydown', cancelOnScrollKey);
-    frame = window.requestAnimationFrame(step);
-  };
-
-  useEffect(() => {
-    const hero = heroRef.current;
-    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const rect = hero.getBoundingClientRect();
-      const offset = motion.matches ? 0 : Math.max(0, Math.min(-rect.top, hero.offsetHeight));
-      hero.style.setProperty('--hero-scroll', `${offset}px`);
-      hero.classList.toggle('is-in-view', rect.bottom > window.innerHeight * 0.15 && rect.top < window.innerHeight * 0.85);
-    };
-    const requestUpdate = () => {
-      if (!frame) frame = window.requestAnimationFrame(update);
-    };
-    window.addEventListener('scroll', requestUpdate, { passive: true });
-    window.addEventListener('resize', requestUpdate);
-    motion.addEventListener('change', requestUpdate);
-    update();
-    return () => {
-      window.removeEventListener('scroll', requestUpdate);
-      window.removeEventListener('resize', requestUpdate);
-      motion.removeEventListener('change', requestUpdate);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
-  }, []);
 
   return <>
     <a className="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -135,7 +64,7 @@ function App() {
       <section id="inicio" className="hero" aria-labelledby="hero-title" ref={heroRef}>
         <div className="hero-word" aria-hidden="true"><span>DUDU</span></div>
         <div className="hero-visual" aria-hidden="true">
-          {heroImage ? <img className="hero-photo" src={heroImage} alt="" fetchPriority="high" /> : <div className="hero-placeholder"><span className="placeholder-ring"></span><span className="placeholder-letter">D</span><span className="placeholder-caption">DUDU / BARBER SHOP</span></div>}
+          <div className="hero-photo-layer">{heroImage ? <img className="hero-photo" src={heroImage} alt="" fetchPriority="high" /> : <div className="hero-placeholder"><span className="placeholder-ring"></span><span className="placeholder-letter">D</span><span className="placeholder-caption">DUDU / BARBER SHOP</span></div>}</div>
         </div>
         <div className="hero-shade" aria-hidden="true"></div>
         <div className="hero-content wrap">

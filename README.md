@@ -16,6 +16,14 @@ npm run build
 npm run preview
 ```
 
+Para gerar a versão de produção e testar as animações, o parallax e o botão em um navegador instalado:
+
+```bash
+npm run test:browser
+```
+
+O teste procura Chrome ou Edge nos locais comuns. Se necessário, defina `CHROME_PATH` com o caminho do navegador antes de executá-lo.
+
 ## Conteúdo pendente
 
 - **Foto principal:** o recorte transparente, gerado por IA a partir da foto fornecida, está em `public/images/dudu-recorte.webp` e é configurado pela constante `heroImage` em `src/main.jsx`. O original está em `referencias/foto-home-original.jpg`. A composição mantém o efeito de parallax e respeita a configuração de movimento reduzido.
