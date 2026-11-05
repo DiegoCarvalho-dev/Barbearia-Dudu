@@ -13,6 +13,7 @@ Criar uma vitrine digital para a Dudu Barber Shop, com foco em apresentar a marc
 - Cada seção ocupa a altura da tela, inclusive no celular. O destaque mantém o efeito de foto fixa enquanto sai da tela, sem aumentar a altura do início. Em telas muito baixas, o conteúdo da seção pode ser rolado para permanecer acessível.
 - O retrato é enquadrado sem corte e o efeito respeita a preferência por movimento reduzido e telas móveis.
 - No home, a foto acompanha a janela enquanto o nome ao fundo se desloca em outra velocidade. Após o carregamento dos recursos, a foto entra pela direita, as frases entram por lados diferentes e as entradas se repetem ao retornar à seção. O menu apresenta um traço animado ao passar o mouse.
+- Em celulares, o nome fica centralizado atrás do retrato e a chamada aparece abaixo. Em tablets e laptops menores, a tipografia e a foto são redimensionadas para preservar espaço para a frase.
 - O botão principal do home é vermelho e arredondado e leva à história com uma rolagem gradual. A animação respeita a preferência por movimento reduzido e pode ser interrompida pela pessoa.
 - A marca no cabeçalho é apenas informativa. A frase principal e as cidades recebem um efeito discreto ao passar o mouse, sem indicar que são links.
 - A imagem de referência aprovada é uma simulação. A fotografia enviada posteriormente foi adicionada à abertura do site.

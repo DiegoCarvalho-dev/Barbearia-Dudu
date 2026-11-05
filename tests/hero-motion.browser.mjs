@@ -108,6 +108,38 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
   });
 }
 
+for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 680, height: 900 }, { width: 768, height: 1024 }, { width: 1024, height: 768 }, { width: 568, height: 320 }]) {
+  test(`composição do home em ${viewport.width}x${viewport.height}`, async () => {
+    const { page, errors } = await openPage(viewport);
+    try {
+      await page.waitForTimeout(2200);
+      const layout = await page.evaluate(() => {
+        const rect = (selector) => document.querySelector(selector).getBoundingClientRect().toJSON();
+        const button = document.querySelector('.hero-button');
+        const range = document.createRange();
+        range.selectNode(button.firstChild);
+        return {
+          word: rect('.hero-word'), photo: rect('.hero-photo'), title: rect('.hero h1'),
+          button: rect('.hero-button'), cities: rect('.hero-cities'),
+          wordLayer: Number(getComputedStyle(document.querySelector('.hero-word')).zIndex),
+          photoLayer: Number(getComputedStyle(document.querySelector('.hero-visual')).zIndex),
+          buttonTextLines: range.getClientRects().length, width: document.documentElement.scrollWidth,
+        };
+      });
+      assert.ok(layout.width <= viewport.width, 'A página não deve ultrapassar a largura da tela.');
+      assert.ok(layout.word.left >= -1 && layout.word.right <= viewport.width + 1, 'O nome deve caber na tela.');
+      assert.ok(layout.wordLayer < layout.photoLayer, 'O retrato deve ficar à frente do nome.');
+      assert.ok(layout.word.left < layout.photo.right && layout.word.right > layout.photo.left && layout.word.top < layout.photo.bottom && layout.word.bottom > layout.photo.top, 'O nome deve aparecer atrás da foto.');
+      assert.ok(layout.title.top >= 0 && layout.button.bottom <= layout.cities.top && layout.cities.bottom <= viewport.height, 'A chamada, o botão e as cidades precisam caber sem sobreposição.');
+      assert.equal(layout.buttonTextLines, 1, 'O texto do botão deve caber em uma linha.');
+      if (viewport.width <= 640 && viewport.height > viewport.width) {
+        assert.ok(layout.title.top >= layout.photo.bottom - 20, 'A chamada deve ficar abaixo da maior parte do retrato no celular.');
+      }
+      assert.deepEqual(errors, []);
+    } finally { await page.close(); }
+  });
+}
+
 test('o botão percorre a página gradualmente e chega à história', async () => {
   const { page } = await openPage({ width: 390, height: 844 });
   try {
