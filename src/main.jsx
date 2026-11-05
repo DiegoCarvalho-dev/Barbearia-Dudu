@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './style.css';
 
@@ -31,7 +31,32 @@ function WhatsAppIcon() {
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const heroRef = useRef(null);
   const closeMenu = () => setMenuOpen(false);
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const offset = motion.matches ? 0 : Math.max(0, Math.min(-hero.getBoundingClientRect().top, hero.offsetHeight));
+      hero.style.setProperty('--hero-scroll', `${offset}px`);
+    };
+    const requestUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
+    motion.addEventListener('change', requestUpdate);
+    update();
+    return () => {
+      window.removeEventListener('scroll', requestUpdate);
+      window.removeEventListener('resize', requestUpdate);
+      motion.removeEventListener('change', requestUpdate);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   return <>
     <a className="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -53,7 +78,7 @@ function App() {
     </header>
 
     <main id="conteudo">
-      <section id="inicio" className="hero" aria-labelledby="hero-title">
+      <section id="inicio" className="hero" aria-labelledby="hero-title" ref={heroRef}>
         <div className="hero-visual" aria-hidden="true">
           {heroImage ? <img className="hero-photo" src={heroImage} alt="" fetchPriority="high" /> : <div className="hero-placeholder"><span className="placeholder-ring"></span><span className="placeholder-letter">D</span><span className="placeholder-caption">DUDU / BARBER SHOP</span></div>}
         </div>

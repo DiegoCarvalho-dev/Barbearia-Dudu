@@ -25,3 +25,68 @@
   .hero{min-height:115svh}
   .hero-photo{position:relative;top:auto}
 }
+
+/* Cada seção ocupa exatamente a janela; conteúdos altos continuam acessíveis. */
+html{scroll-padding-top:0}
+.hero,.story,.team,.services,.plans,.locations{height:100svh;min-height:0;max-height:100svh}
+.story,.team,.services,.plans,.locations{display:flex;align-items:safe center;padding:clamp(24px,5svh,70px) 0;overflow-y:auto;overscroll-behavior-y:auto}
+.story>.wrap,.team>.wrap,.services>.wrap,.plans>.wrap,.locations>.wrap{margin-block:auto}
+.hero{overflow:clip}
+.hero-photo,.hero-placeholder{position:relative;top:0;height:100svh;min-height:0;transform:translate3d(0,var(--hero-scroll,0px),0)}
+.hero-content{height:100%;display:flex;align-items:center;padding-top:86px;padding-bottom:32px}
+.hero h1{font-size:min(clamp(70px,10vw,150px),16svh);margin:clamp(14px,2svh,28px) 0}
+.hero-copy{margin-bottom:clamp(14px,2svh,28px)}
+.hero-foot{top:auto;bottom:20px}
+.section-head{margin-bottom:clamp(20px,4svh,55px)}
+.service-row{min-height:clamp(70px,12svh,120px)}
+.plan-card{min-height:clamp(240px,34svh,310px)}
+@media(max-width:640px){
+  .hero-visual{top:72px}
+  .hero-photo,.hero-placeholder{height:calc(68svh - 20px);min-height:0}
+  .hero-content{position:absolute;inset:auto 0 0;display:block;height:auto;padding:35px 0 clamp(18px,3svh,28px)}
+  .hero-content-inner{background:linear-gradient(0deg,#101010 80%,#101010db);box-shadow:0 0 0 20px #101010e8}
+  .hero h1{font-size:clamp(44px,11vw,68px);margin:12px 0;line-height:.84}
+  .hero-copy{font-size:13px;line-height:1.4;margin-bottom:14px}
+  .hero .button{min-height:46px}
+  .story,.team,.services,.plans,.locations{padding:24px 0}
+  .section-label{margin-bottom:14px}
+  h2{font-size:clamp(38px,10vw,55px)}
+  .story-grid,.locations-grid{gap:16px}
+  .story-copy{font-size:13px;line-height:1.55}
+  .story-copy .lead{font-size:16px;line-height:1.4}
+  .story-copy p{margin-bottom:12px}
+  .text-link{margin-top:8px;padding-bottom:9px}
+  .team-grid{gap:20px}
+  .team-mark{min-height:clamp(135px,23svh,220px)}
+  .team-mark:before{width:130px;height:130px}
+  .team-mark span{font-size:70px}
+  .team-grid>div:last-child>p:not(.section-label){font-size:13px;line-height:1.5;margin:15px 0 0}
+  .section-head{margin-bottom:18px}
+  .section-head>p{font-size:13px;line-height:1.45;margin-top:12px}
+  .service-row{min-height:0;padding:12px 0}
+  .service-row h3{font-size:23px}
+  .service-row p{font-size:12px;line-height:1.3}
+  .services-bottom{margin-top:16px;gap:8px}
+  .services-bottom p{font-size:12px}
+  .plan-grid{gap:8px}
+  .plan-card{min-height:0;padding:12px 15px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px}
+  .plan-index{font-size:9px}
+  .plan-card h3{font-size:22px;margin:3px 0}
+  .price{grid-column:2;grid-row:1 / 4;font-size:36px}
+  .plan-detail{font-size:11px;margin:0}
+  .plan-card a{grid-column:1 / -1;padding-top:8px;margin-top:6px;font-size:9px}
+  .plan-note{font-size:10px;margin-top:10px}
+  .locations-intro{margin:15px 0;font-size:13px}
+  .city-list{padding-top:0}
+  .city-row{padding:15px 0}
+  .city-row h3{font-size:22px}
+}
+@media(prefers-reduced-motion:reduce){.hero-photo,.hero-placeholder{transform:none}}
+@media(max-height:500px) and (min-width:641px){
+  .header{height:60px}
+  .hero-content{padding-top:60px;padding-bottom:12px}
+  .hero h1{font-size:clamp(32px,12svh,56px);margin:8px 0}
+  .hero-copy{font-size:12px;line-height:1.3;margin-bottom:10px}
+  .hero .button{min-height:38px}
+  .eyebrow{font-size:8px}
+}

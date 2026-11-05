@@ -9,7 +9,8 @@ Criar uma vitrine digital para a Dudu Barber Shop, com foco em apresentar a marc
 - Visual clássico e moderno, minimalista, organizado e de fácil leitura.
 - Paleta: preto `#101010`, grafite `#1b1b1b`, branco quente `#f3efea`, cinza `#a8a39f` e vermelho `#c91822` como cor de destaque. As cores podem ser refinadas para garantir contraste.
 - Página inicial com nome em destaque à esquerda e espaço para uma futura foto do barbeiro, de lado e com os braços cruzados, à direita.
-- Efeito de rolagem no destaque: o conteúdo passa enquanto a imagem permanece visualmente fixa durante uma área estendida da seção. O retrato é enquadrado sem corte e o efeito respeita a preferência por movimento reduzido e telas móveis.
+- Cada seção ocupa a altura da tela, inclusive no celular. O destaque mantém o efeito de foto fixa enquanto sai da tela, sem aumentar a altura do início. Em telas muito baixas, o conteúdo da seção pode ser rolado para permanecer acessível.
+- O retrato é enquadrado sem corte e o efeito respeita a preferência por movimento reduzido e telas móveis.
 - A imagem de referência aprovada é uma simulação. A fotografia enviada posteriormente foi adicionada à abertura do site.
 - Layout responsivo para celulares, tablets, laptops e desktops, com navegação acessível e carregamento leve.
 - A relação das unidades não deve aparecer como uma faixa logo abaixo do destaque, como na imagem de referência.
