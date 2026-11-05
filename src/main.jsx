@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './style.css';
 
-// Troque por uma imagem em /public/images quando a fotografia for enviada.
-const heroImage = '';
+// Fotografia principal; substitua o arquivo em /public/images quando necessário.
+const heroImage = '/images/dudu-home.webp';
 // Número de demonstração. Substituir pelo número oficial antes da publicação final.
 const whatsapp = 'https://wa.me/5500000000000';
 
@@ -55,7 +55,7 @@ function App() {
     <main id="conteudo">
       <section id="inicio" className="hero" aria-labelledby="hero-title">
         <div className="hero-visual" aria-hidden="true">
-          {heroImage ? <img className="hero-photo" src={heroImage} alt="" /> : <div className="hero-placeholder"><span className="placeholder-ring"></span><span className="placeholder-letter">D</span><span className="placeholder-caption">DUDU / BARBER SHOP</span></div>}
+          {heroImage ? <img className="hero-photo" src={heroImage} alt="" fetchPriority="high" /> : <div className="hero-placeholder"><span className="placeholder-ring"></span><span className="placeholder-letter">D</span><span className="placeholder-caption">DUDU / BARBER SHOP</span></div>}
         </div>
         <div className="hero-shade" aria-hidden="true"></div>
         <div className="hero-content wrap">

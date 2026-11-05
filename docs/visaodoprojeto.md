@@ -10,7 +10,7 @@ Criar uma vitrine digital para a Dudu Barber Shop, com foco em apresentar a marc
 - Paleta: preto `#101010`, grafite `#1b1b1b`, branco quente `#f3efea`, cinza `#a8a39f` e vermelho `#c91822` como cor de destaque. As cores podem ser refinadas para garantir contraste.
 - Página inicial com nome em destaque à esquerda e espaço para uma futura foto do barbeiro, de lado e com os braços cruzados, à direita.
 - Efeito de rolagem no destaque: o conteúdo passa enquanto a imagem permanece visualmente fixa na sua área; respeitar a preferência por movimento reduzido e adaptar para telas móveis.
-- A imagem de referência aprovada é uma simulação: a fotografia real será enviada posteriormente. Não apresentar pessoas fictícias como equipe real.
+- A imagem de referência aprovada é uma simulação. A fotografia enviada posteriormente foi adicionada à abertura do site.
 - Layout responsivo para celulares, tablets, laptops e desktops, com navegação acessível e carregamento leve.
 - A relação das unidades não deve aparecer como uma faixa logo abaixo do destaque, como na imagem de referência.
 
@@ -31,7 +31,7 @@ Criar uma vitrine digital para a Dudu Barber Shop, com foco em apresentar a marc
 
 ## Pendências de conteúdo
 
-- Foto principal e imagens autorizadas da equipe e das unidades.
+- Imagens autorizadas da equipe e das unidades.
 - Número de WhatsApp definitivo.
 - Confirmação dos valores e das condições completas dos planos.
 - Endereços, horários por unidade e informações adicionais verificadas para enriquecer a história e a apresentação da equipe.
