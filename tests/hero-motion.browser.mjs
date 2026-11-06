@@ -226,6 +226,29 @@ test('a preferência de movimento reduzido desativa as animações e o parallax'
   } finally { await page.close(); }
 });
 
+test('os destaques da história respondem ao mouse e o link leva à equipe', async () => {
+  const { page, errors } = await openPage({ width: 1440, height: 900 });
+  try {
+    await page.locator('#historia').evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+    await page.waitForTimeout(1500);
+    for (const selector of ['.story h2 .story-highlight', '.story-copy .story-highlight', '.story-trajectory']) {
+      const element = page.locator(selector);
+      const before = await element.evaluate((node) => getComputedStyle(node).color);
+      await element.hover();
+      await page.waitForTimeout(300);
+      const after = await element.evaluate((node) => getComputedStyle(node).color);
+      assert.notEqual(after, before, `${selector} deve mudar de cor ao passar o mouse.`);
+    }
+    const link = page.locator('.story-link');
+    const before = await link.evaluate((node) => getComputedStyle(node).color);
+    await link.hover();
+    await page.waitForTimeout(300);
+    assert.notEqual(await link.evaluate((node) => getComputedStyle(node).color), before);
+    assert.equal(await link.getAttribute('href'), '#equipe');
+    assert.deepEqual(errors, []);
+  } finally { await page.close(); }
+});
+
 test('a história revela foto e texto uma vez ao entrar na tela', async () => {
   const { page, errors } = await openPage({ width: 1440, height: 900 });
   try {

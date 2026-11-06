@@ -83,12 +83,11 @@ function App() {
 
       <section className="story section-light" id="historia" tabIndex="-1" ref={storyRef} aria-labelledby="story-title">
         <div className="wrap story-grid">
-          <div className="story-heading"><p className="section-label"><span>01 /</span> NOSSA HISTÓRIA</p><h2 id="story-title">De um <em>sonho,</em><br />nasceu uma história.</h2></div>
+          <div className="story-heading"><p className="section-label">NOSSA HISTÓRIA</p><h2 id="story-title">Uma história que começou com um <em className="story-highlight">sonho.</em></h2></div>
           <figure className="story-visual">
             <img src="/images/dudu-historia.webp" alt="Dudu aparando a barba de um cliente na barbearia" width="1170" height="1180" loading="lazy" decoding="async" />
-            <figcaption className="story-year"><span>DESDE</span><strong>2016</strong></figcaption>
           </figure>
-          <div className="story-copy"><p className="story-intro">Em <strong>2016</strong>, um casal de jovens empreendedores decidiu transformar o sonho de ter o próprio negócio em realidade. Assim começou a história da Dudu Barber Shop.</p><p>Com o tempo, a formação de novos barbeiros também passou a fazer parte dessa trajetória. Hoje, a marca está presente em São José de Mipibu, Nísia Floresta e Goianinha.</p><a className="story-link" href="#equipe">Conheça a equipe <Arrow diagonal /></a></div>
+          <div className="story-copy"><p>Em <strong className="story-highlight">2016</strong>, um casal de jovens empreendedores decidiu transformar o sonho de ter o próprio negócio em realidade.</p><p>Com o tempo, a formação de novos barbeiros passou a fazer parte da <span className="story-trajectory">nossa trajetória.</span></p><a className="story-link" href="#equipe">Conheça a equipe <Arrow diagonal /></a></div>
         </div>
       </section>
 
