@@ -10,6 +10,7 @@ import './team.css';
 import './small-sections.css';
 import './services.css';
 import './plans.css';
+import './locations.css';
 
 // Fotografia principal; substitua o arquivo em /public/images quando necessário.
 const heroImage = '/images/dudu-recorte.webp';
@@ -57,6 +58,7 @@ function App() {
   const teamRef = useRevealOnce();
   const servicesRef = useRevealOnce();
   const plansRef = useRevealOnce();
+  const locationsRef = useRevealOnce();
   const scrollToStory = useStoryScroll();
   const closeMenu = () => setMenuOpen(false);
 
@@ -155,7 +157,23 @@ function App() {
         </div>
       </section>
 
-      <section className="locations section-dark" id="unidades"><div className="wrap locations-grid"><div><p className="section-label"><span>05 /</span> ONDE ESTAMOS</p><h2>Três cidades.<br /><em>Uma história.</em></h2><p className="locations-intro">A Dudu Barber Shop está presente em três cidades do Rio Grande do Norte.</p><a className="button button-outline" href={whatsapp} target="_blank" rel="noreferrer">Fale com a equipe <Arrow diagonal /></a></div><div className="city-list">{cities.map((city, i) => <div className="city-row" key={city}><span>0{i + 1}</span><h3>{city}</h3><span>RN</span></div>)}</div></div></section>
+      <section className="locations" id="unidades" ref={locationsRef} aria-labelledby="locations-title">
+        <div className="wrap locations-grid">
+          <div className="locations-brand" aria-label="Dudu Barber Shop"><span>DUDU</span><small>BARBER SHOP</small></div>
+          <div className="locations-heading">
+            <p className="section-label">ONDE ESTAMOS</p>
+            <h2 id="locations-title">Três cidades.<br />Uma história.</h2>
+            <p className="locations-intro">A Dudu Barber Shop está presente em três cidades do Rio Grande do Norte.</p>
+          </div>
+          <ul className="city-list" aria-label="Cidades atendidas">
+            {cities.map((city) => <li className="city-row" key={city}>
+              <svg className="location-pin" viewBox="0 0 24 30" fill="none" aria-hidden="true"><path d="M12 28S3 19.7 3 11a9 9 0 1 1 18 0c0 8.7-9 17-9 17Z" fill="currentColor"/><circle cx="12" cy="11" r="3" fill="#111"/></svg>
+              <div><h3>{city}</h3><span>RN</span></div>
+            </li>)}
+          </ul>
+          <a className="locations-cta" href={whatsapp} target="_blank" rel="noreferrer">Fale com a equipe <Arrow diagonal /></a>
+        </div>
+      </section>
     </main>
 
     <footer className="footer"><div className="wrap footer-inner"><a href="#inicio" className="brand footer-brand"><span>DUDU</span><small>BARBER SHOP</small></a><p>Uma história de cuidado e dedicação.</p><a href="https://www.instagram.com/dudu.barbershop01/" target="_blank" rel="noreferrer">INSTAGRAM <Arrow diagonal /></a></div><div className="wrap footer-bottom"><span>© {new Date().getFullYear()} DUDU BARBER SHOP</span><a href="#inicio">VOLTAR AO TOPO ↑</a></div></footer>

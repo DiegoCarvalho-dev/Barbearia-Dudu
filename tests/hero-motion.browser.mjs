@@ -326,6 +326,50 @@ test('os planos entram suavemente uma vez e não reiniciam ao voltar', async () 
   } finally { await page.close(); }
 });
 
+test('as cidades e a chamada entram uma vez e permanecem visíveis ao voltar', async () => {
+  const { page, errors } = await openPage({ width: 1440, height: 900 });
+  try {
+    await page.locator('#unidades').evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+    await page.waitForFunction(() => document.querySelector('.locations').classList.contains('is-revealed'));
+    const names = await page.locator('.city-row').evaluateAll((elements) => elements.map((element) => getComputedStyle(element).animationName));
+    assert.deepEqual(names, ['locations-from-right', 'locations-from-right', 'locations-from-right']);
+    await page.waitForTimeout(1600);
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    await page.locator('#unidades').evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+    await page.waitForTimeout(150);
+    const items = await page.locator('.locations-brand, .locations-heading, .city-row, .locations-cta').evaluateAll((elements) => elements.map((element) => ({ opacity: Number(getComputedStyle(element).opacity), animations: element.getAnimations().length })));
+    assert.ok(items.every((item) => item.opacity === 1 && item.animations === 0));
+    assert.deepEqual(errors, []);
+  } finally { await page.close(); }
+});
+
+for (const viewport of [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 568 }, { width: 568, height: 320 }]) {
+  test(`cidades e contato permanecem visíveis em ${viewport.width}x${viewport.height}`, async () => {
+    const { page, errors } = await openPage(viewport, { reducedMotion: 'reduce' });
+    try {
+      await page.locator('#unidades').evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+      const layout = await page.locator('.locations').evaluate((section) => {
+        const rows = [...section.querySelectorAll('.city-row')];
+        const heading = section.querySelector('.locations-heading').getBoundingClientRect();
+        const list = section.querySelector('.city-list').getBoundingClientRect();
+        const cta = section.querySelector('.locations-cta');
+        const box = cta.getBoundingClientRect();
+        const floating = document.querySelector('.whatsapp').getBoundingClientRect();
+        const overlaps = box.right > floating.left && box.left < floating.right && box.bottom > floating.top && box.top < floating.bottom;
+        return { height: section.clientHeight, content: section.scrollHeight, pageWidth: document.documentElement.scrollWidth, cities: rows.map((row) => row.querySelector('h3').textContent), href: cta.getAttribute('href'), ctaBottom: box.bottom, listBottom: list.bottom, headingBottom: heading.bottom, listTop: list.top, ctaTop: box.top, overlaps, animation: getComputedStyle(rows[0]).animationName };
+      });
+      assert.equal(layout.height, viewport.height);
+      assert.ok(layout.content <= layout.height + 1 && layout.ctaBottom <= viewport.height + 1 && layout.listBottom <= viewport.height + 1);
+      assert.ok(layout.pageWidth <= viewport.width && !layout.overlaps);
+      assert.deepEqual(layout.cities, ['São José de Mipibu', 'Nísia Floresta', 'Goianinha']);
+      assert.equal(layout.href, 'https://wa.me/5500000000000');
+      assert.equal(layout.animation, 'none');
+      if (viewport.width === 390 || viewport.width === 320 || viewport.width === 768) assert.ok(layout.headingBottom <= layout.listTop && layout.listBottom <= layout.ctaTop);
+      assert.deepEqual(errors, []);
+    } finally { await page.close(); }
+  });
+}
+
 for (const viewport of [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 568 }, { width: 568, height: 320 }]) {
   test(`planos e condições permanecem visíveis em ${viewport.width}x${viewport.height}`, async () => {
     const { page, errors } = await openPage(viewport, { reducedMotion: 'reduce' });
