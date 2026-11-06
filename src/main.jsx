@@ -7,6 +7,7 @@ import './style.css';
 import './home.css';
 import './story.css';
 import './team.css';
+import './small-sections.css';
 
 // Fotografia principal; substitua o arquivo em /public/images quando necessário.
 const heroImage = '/images/dudu-recorte.webp';

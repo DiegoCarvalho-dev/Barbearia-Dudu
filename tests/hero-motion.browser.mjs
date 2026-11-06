@@ -329,17 +329,40 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 768, height: 1024
         const section = document.querySelector('.story');
         const photo = document.querySelector('.story-visual img');
         const link = document.querySelector('.story-link');
+        section.scrollTop = section.scrollHeight;
         const box = link.getBoundingClientRect();
-        return { height: section.clientHeight, scrollHeight: section.scrollHeight, pageWidth: document.documentElement.scrollWidth, photoWidth: photo.naturalWidth, alt: photo.alt, linkBottom: box.bottom, linkHref: link.getAttribute('href'), animation: getComputedStyle(document.querySelector('.story-heading')).animationName };
+        return { height: section.clientHeight, scrollHeight: section.scrollHeight, pageWidth: document.documentElement.scrollWidth, photoWidth: photo.naturalWidth, alt: photo.alt, linkBottom: box.bottom, linkHref: link.getAttribute('href'), animation: getComputedStyle(document.querySelector('.story-heading')).animationName, overflow: getComputedStyle(section).overflowY };
       });
       assert.equal(layout.height, viewport.height);
-      assert.ok(layout.scrollHeight <= layout.height + 1, 'A seção deve caber na tela verificada.');
+      if (viewport.height > 400) assert.ok(layout.scrollHeight <= layout.height + 1, 'A seção deve caber na tela verificada.');
+      else assert.equal(layout.overflow, 'auto', 'Em telas muito baixas, o conteúdo deve permanecer rolável.');
       assert.ok(layout.pageWidth <= viewport.width);
       assert.equal(layout.photoWidth, 1170);
       assert.ok(layout.alt.includes('barba'));
       assert.ok(layout.linkBottom <= viewport.height);
       assert.equal(layout.linkHref, '#equipe');
       assert.equal(layout.animation, 'none');
+      assert.deepEqual(errors, []);
+    } finally { await page.close(); }
+  });
+}
+
+for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 568, height: 320 }]) {
+  test(`foto acima do texto nas duas seções em ${viewport.width}x${viewport.height}`, async () => {
+    const { page, errors } = await openPage(viewport, { reducedMotion: 'reduce' });
+    try {
+      for (const section of ['story', 'team']) {
+        await page.locator(`.${section}`).evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+        const layout = await page.locator(`.${section}`).evaluate((element) => {
+          const photo = element.querySelector('figure').getBoundingClientRect();
+          const heading = element.querySelector('h2').getBoundingClientRect();
+          const copy = element.querySelector(`.${element.classList.contains('story') ? 'story' : 'team'}-copy`).getBoundingClientRect();
+          return { photoBottom: photo.bottom, photoWidth: photo.width, headingTop: heading.top, headingBottom: heading.bottom, copyTop: copy.top };
+        });
+        assert.ok(layout.photoBottom <= layout.headingTop, 'A foto deve aparecer acima do título.');
+        assert.ok(layout.headingBottom <= layout.copyTop, 'O texto deve aparecer abaixo do título.');
+        if (viewport.width === 390) assert.ok(layout.photoWidth >= 250, 'A foto deve ter destaque no celular.');
+      }
       assert.deepEqual(errors, []);
     } finally { await page.close(); }
   });
