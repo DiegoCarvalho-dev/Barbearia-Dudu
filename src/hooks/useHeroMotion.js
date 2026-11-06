@@ -9,6 +9,7 @@ export function useHeroMotion() {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let frame = 0;
     let ready = false;
+    let entered = false;
     let disposed = false;
     let fallbackTimer;
     let onLoad;
@@ -20,7 +21,10 @@ export function useHeroMotion() {
       const rect = hero.getBoundingClientRect();
       const offset = motion.matches ? 0 : Math.max(0, Math.min(-rect.top, hero.offsetHeight));
       hero.style.setProperty('--hero-scroll', `${offset}px`);
-      hero.classList.toggle('is-in-view', ready && document.visibilityState === 'visible' && rect.bottom > window.innerHeight * 0.15 && rect.top < window.innerHeight * 0.85);
+      if (!entered && ready && document.visibilityState === 'visible' && rect.bottom > window.innerHeight * 0.15 && rect.top < window.innerHeight * 0.85) {
+        entered = true;
+        hero.classList.add('is-in-view');
+      }
     };
     const requestUpdate = () => {
       if (!frame) frame = window.requestAnimationFrame(update);

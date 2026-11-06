@@ -99,10 +99,18 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
       assert.ok(Math.abs((scrolled.text - initial.text) + 250) < 3, 'O texto deve acompanhar a página.');
       await page.evaluate(() => window.scrollTo({ top: innerHeight, behavior: 'instant' }));
       await page.waitForTimeout(100);
-      assert.equal(await page.locator('.hero').evaluate((element) => element.classList.contains('is-in-view')), false);
       await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-      await page.waitForFunction(() => document.querySelector('.hero').classList.contains('is-in-view'));
-      assert.ok(await page.locator('.hero-photo').evaluate((element) => element.getAnimations().some((animation) => animation.animationName === 'home-portrait-in')));
+      await page.waitForTimeout(150);
+      const returned = await page.locator('.hero-photo').evaluate((element) => ({
+        animations: element.getAnimations().map((animation) => animation.animationName),
+        opacity: Number(getComputedStyle(element).opacity),
+        top: element.getBoundingClientRect().top,
+      }));
+      assert.ok(!returned.animations.includes('home-portrait-in'), 'A entrada não deve reiniciar ao voltar para o home.');
+      assert.equal(returned.opacity, 1, 'A foto deve permanecer visível ao voltar.');
+      assert.ok(Math.abs(returned.top - initial.photo) < 2, 'O parallax deve retornar à posição inicial sem piscar.');
+      const textAnimations = await page.locator('.hero-word span, .hero h1 span, .hero-button').evaluateAll((elements) => elements.flatMap((element) => element.getAnimations().map((animation) => animation.animationName)));
+      assert.ok(!textAnimations.some((name) => ['home-word-in', 'home-in-left', 'home-in-right'].includes(name)), 'Os textos e o botão não devem refazer a entrada.');
       assert.deepEqual(errors, []);
     } finally { await page.close(); }
   });
