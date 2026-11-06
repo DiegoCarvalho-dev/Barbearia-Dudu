@@ -17,6 +17,7 @@ Criar uma vitrine digital para a Dudu Barber Shop, com foco em apresentar a marc
 - O botão principal do home é claro e arredondado e leva à história com uma rolagem gradual. A animação respeita a preferência por movimento reduzido e pode ser interrompida pela pessoa.
 - A marca no cabeçalho é apenas informativa. A frase principal e as cidades recebem um efeito discreto ao passar o mouse, sem indicar que são links.
 - A seção Nossa História segue a direção aprovada: fundo branco, foto do Dudu trabalhando com cantos arredondados e tipografia sem serifa. “Sonho” e “2016” aparecem em vermelho, com efeitos discretos ao passar o mouse, assim como “nossa trajetória” e o link para a equipe. As animações de entrada acontecem apenas na primeira visita à seção. A foto original está em `referencias/foto-historia-original.jpeg` e a versão otimizada em `public/images/dudu-historia.webp`.
+- A seção Nossa Equipe segue a direção preta aprovada: texto à esquerda, fotografia original da equipe à direita, cantos arredondados e destaque vermelho em “diferença”. A foto otimizada está em `public/images/equipe-dudu.webp`. A entrada do texto e da foto acontece apenas uma vez e respeita movimento reduzido; o link leva ao Instagram.
 - A imagem de referência aprovada é uma simulação. A fotografia enviada posteriormente foi adicionada à abertura do site.
 - Layout responsivo para celulares, tablets, laptops e desktops, com navegação acessível e carregamento leve.
 - A relação das unidades não deve aparecer como uma faixa logo abaixo do destaque, como na imagem de referência.

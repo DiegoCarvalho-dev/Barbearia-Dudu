@@ -6,6 +6,7 @@ import { useStoryScroll } from './hooks/useStoryScroll.js';
 import './style.css';
 import './home.css';
 import './story.css';
+import './team.css';
 
 // Fotografia principal; substitua o arquivo em /public/images quando necessário.
 const heroImage = '/images/dudu-recorte.webp';
@@ -42,6 +43,7 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const heroRef = useHeroMotion();
   const storyRef = useRevealOnce();
+  const teamRef = useRevealOnce();
   const scrollToStory = useStoryScroll();
   const closeMenu = () => setMenuOpen(false);
 
@@ -91,7 +93,22 @@ function App() {
         </div>
       </section>
 
-      <section className="team section-light" id="equipe"><div className="wrap team-grid"><div className="team-mark" aria-hidden="true"><span>DUDU</span><small>BARBER SHOP / DESDE 2016</small></div><div><p className="section-label"><span>02 /</span> NOSSA EQUIPE</p><h2>Quem faz<br /><em>acontecer.</em></h2><p>Uma equipe que faz parte da história da Dudu Barber Shop e recebe cada cliente em suas unidades.</p><a className="text-link" href="https://www.instagram.com/dudu.barbershop01/" target="_blank" rel="noreferrer">CONHEÇA PELO INSTAGRAM <Arrow diagonal /></a></div></div></section>
+      <section className="team" id="equipe" ref={teamRef} aria-labelledby="team-title">
+        <div className="wrap team-grid">
+          <div className="team-heading">
+            <p className="section-label">NOSSA EQUIPE</p>
+            <h2 id="team-title">Pessoas que fazem a <em>diferença.</em></h2>
+          </div>
+          <div className="team-copy">
+            <p>Por trás de cada atendimento, existe uma equipe que faz parte da história da Dudu Barber Shop.</p>
+            <p>Conheça as pessoas que recebem nossos clientes em cada unidade.</p>
+            <a className="team-link" href="https://www.instagram.com/dudu.barbershop01/" target="_blank" rel="noreferrer">Acompanhe no Instagram <Arrow diagonal /></a>
+          </div>
+          <figure className="team-visual">
+            <img src="/images/equipe-dudu.webp" alt="Equipe da Dudu Barber Shop reunida para uma fotografia" width="885" height="885" loading="lazy" decoding="async" />
+          </figure>
+        </div>
+      </section>
 
       <section className="services section-dark" id="servicos">
         <div className="wrap"><div className="section-head"><div><p className="section-label"><span>03 /</span> O QUE FAZEMOS</p><h2>Seu estilo.<br /><em>Nosso cuidado.</em></h2></div><p>Do corte aos detalhes, conheça alguns dos serviços da barbearia.</p></div>

@@ -272,6 +272,53 @@ test('a história revela foto e texto uma vez ao entrar na tela', async () => {
   } finally { await page.close(); }
 });
 
+test('a equipe entra em cena uma vez e permanece visível ao voltar', async () => {
+  const { page, errors } = await openPage({ width: 1440, height: 900 });
+  try {
+    await page.locator('#equipe').evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+    await page.waitForFunction(() => document.querySelector('.team').classList.contains('is-revealed'));
+    const animations = await page.evaluate(() => ({
+      text: getComputedStyle(document.querySelector('.team-heading')).animationName,
+      photo: getComputedStyle(document.querySelector('.team-visual')).animationName,
+    }));
+    assert.deepEqual(animations, { text: 'team-from-left', photo: 'team-from-right' });
+    await page.waitForTimeout(1500);
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    await page.locator('#equipe').evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+    await page.waitForTimeout(150);
+    const elements = await page.locator('.team-heading, .team-copy, .team-visual').evaluateAll((nodes) => nodes.map((node) => ({ opacity: Number(getComputedStyle(node).opacity), animations: node.getAnimations().length })));
+    assert.ok(elements.every((element) => element.opacity === 1 && element.animations === 0));
+    assert.deepEqual(errors, []);
+  } finally { await page.close(); }
+});
+
+for (const viewport of [{ width: 1440, height: 900 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 568 }, { width: 568, height: 320 }]) {
+  test(`equipe e história ocupam a tela em ${viewport.width}x${viewport.height}`, async () => {
+    const { page, errors } = await openPage(viewport, { reducedMotion: 'reduce' });
+    try {
+      await page.locator('#equipe').evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+      await page.waitForFunction(() => document.querySelector('.team-visual img').naturalWidth > 0);
+      const layout = await page.evaluate(() => {
+        const story = document.querySelector('.story');
+        const team = document.querySelector('.team');
+        const photo = document.querySelector('.team-visual img');
+        const link = document.querySelector('.team-link');
+        return { storyHeight: story.clientHeight, teamHeight: team.clientHeight, contentHeight: team.scrollHeight, pageWidth: document.documentElement.scrollWidth, imageWidth: photo.naturalWidth, alt: photo.alt, link: link.href, animation: getComputedStyle(document.querySelector('.team-heading')).animationName, photoBottom: photo.getBoundingClientRect().bottom, linkBottom: link.getBoundingClientRect().bottom };
+      });
+      assert.equal(layout.storyHeight, viewport.height);
+      assert.equal(layout.teamHeight, viewport.height);
+      assert.ok(layout.contentHeight <= layout.teamHeight + 1, 'O conteúdo deve caber na tela verificada.');
+      assert.ok(layout.pageWidth <= viewport.width);
+      assert.equal(layout.imageWidth, 885);
+      assert.ok(layout.alt.includes('Equipe'));
+      assert.ok(layout.link.startsWith('https://www.instagram.com/dudu.barbershop01/'));
+      assert.equal(layout.animation, 'none');
+      assert.ok(layout.photoBottom <= viewport.height + 1 && layout.linkBottom <= viewport.height + 1);
+      assert.deepEqual(errors, []);
+    } finally { await page.close(); }
+  });
+}
+
 for (const viewport of [{ width: 1440, height: 900 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 568 }, { width: 568, height: 320 }]) {
   test(`história e fotografia cabem em ${viewport.width}x${viewport.height}`, async () => {
     const { page, errors } = await openPage(viewport, { reducedMotion: 'reduce' });
