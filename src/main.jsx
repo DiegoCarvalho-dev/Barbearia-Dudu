@@ -9,6 +9,7 @@ import './story.css';
 import './team.css';
 import './small-sections.css';
 import './services.css';
+import './plans.css';
 
 // Fotografia principal; substitua o arquivo em /public/images quando necessário.
 const heroImage = '/images/dudu-recorte.webp';
@@ -55,6 +56,7 @@ function App() {
   const storyRef = useRevealOnce();
   const teamRef = useRevealOnce();
   const servicesRef = useRevealOnce();
+  const plansRef = useRevealOnce();
   const scrollToStory = useStoryScroll();
   const closeMenu = () => setMenuOpen(false);
 
@@ -136,9 +138,22 @@ function App() {
         </div>
       </section>
 
-      <section className="plans section-light" id="planos"><div className="wrap"><div className="section-head"><div><p className="section-label"><span>04 /</span> ASSINATURAS</p><h2>Seu cuidado,<br /><em>do seu jeito.</em></h2></div><p>Conheça os planos apresentados pela barbearia e consulte a equipe para confirmar as condições.</p></div>
-        <div className="plan-grid">{plans.map((plan, i) => <article className={i === 2 ? 'plan-card featured' : 'plan-card'} key={plan.name}><span className="plan-index">0{i + 1} / PLANO</span><h3>{plan.name}</h3><p className="price"><small>R$</small> {plan.price}<span>,00</span></p><p className="plan-detail">{plan.details}</p><a href={whatsapp} target="_blank" rel="noreferrer" aria-label={`Consultar plano ${plan.name} pelo WhatsApp`}>CONSULTAR PLANO <Arrow diagonal /></a></article>)}</div><p className="plan-note">Valores e condições sujeitos a confirmação com a equipe.</p>
-      </div></section>
+      <section className="plans" id="planos" ref={plansRef} aria-labelledby="plans-title">
+        <div className="wrap plans-inner">
+          <div className="plans-heading">
+            <p className="section-label">ASSINATURAS</p>
+            <h2 id="plans-title">Seu plano, <em>seu estilo.</em></h2>
+            <p className="plans-intro">Conheça os planos e consulte a equipe para confirmar as condições.</p>
+          </div>
+          <div className="plan-grid">{plans.map((plan) => <article className="plan-card" key={plan.name}>
+            <h3>{plan.name}</h3>
+            <p className="plan-price">R$ {plan.price},00</p>
+            <p className="plan-detail">{plan.details}</p>
+            <a href={whatsapp} target="_blank" rel="noreferrer" aria-label={`Consultar plano ${plan.name} pelo WhatsApp`}>Consultar plano <Arrow diagonal /></a>
+          </article>)}</div>
+          <p className="plan-note">Valores e condições sujeitos à confirmação com a equipe.</p>
+        </div>
+      </section>
 
       <section className="locations section-dark" id="unidades"><div className="wrap locations-grid"><div><p className="section-label"><span>05 /</span> ONDE ESTAMOS</p><h2>Três cidades.<br /><em>Uma história.</em></h2><p className="locations-intro">A Dudu Barber Shop está presente em três cidades do Rio Grande do Norte.</p><a className="button button-outline" href={whatsapp} target="_blank" rel="noreferrer">Fale com a equipe <Arrow diagonal /></a></div><div className="city-list">{cities.map((city, i) => <div className="city-row" key={city}><span>0{i + 1}</span><h3>{city}</h3><span>RN</span></div>)}</div></div></section>
     </main>

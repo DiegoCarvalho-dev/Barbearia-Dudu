@@ -309,6 +309,48 @@ test('os serviços aparecem com animações apenas na primeira visita', async ()
   } finally { await page.close(); }
 });
 
+test('os planos entram suavemente uma vez e não reiniciam ao voltar', async () => {
+  const { page, errors } = await openPage({ width: 1440, height: 900 });
+  try {
+    await page.locator('#planos').evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+    await page.waitForFunction(() => document.querySelector('.plans').classList.contains('is-revealed'));
+    const names = await page.locator('.plan-card').evaluateAll((elements) => elements.map((element) => getComputedStyle(element).animationName));
+    assert.deepEqual(names, ['plans-from-bottom', 'plans-from-bottom', 'plans-from-bottom']);
+    await page.waitForTimeout(1600);
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    await page.locator('#planos').evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+    await page.waitForTimeout(150);
+    const items = await page.locator('.plans-heading, .plan-card, .plan-note').evaluateAll((elements) => elements.map((element) => ({ opacity: Number(getComputedStyle(element).opacity), animations: element.getAnimations().length })));
+    assert.ok(items.every((item) => item.opacity === 1 && item.animations === 0));
+    assert.deepEqual(errors, []);
+  } finally { await page.close(); }
+});
+
+for (const viewport of [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 568 }, { width: 568, height: 320 }]) {
+  test(`planos e condições permanecem visíveis em ${viewport.width}x${viewport.height}`, async () => {
+    const { page, errors } = await openPage(viewport, { reducedMotion: 'reduce' });
+    try {
+      await page.locator('#planos').evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+      const layout = await page.locator('.plans').evaluate((section) => {
+        const cards = [...section.querySelectorAll('.plan-card')];
+        const note = section.querySelector('.plan-note').getBoundingClientRect();
+        const whatsapp = document.querySelector('.whatsapp').getBoundingClientRect();
+        const overlaps = note.right > whatsapp.left && note.left < whatsapp.right && note.bottom > whatsapp.top && note.top < whatsapp.bottom;
+        return { height: section.clientHeight, content: section.scrollHeight, pageWidth: document.documentElement.scrollWidth, cards: cards.map((card) => ({ name: card.querySelector('h3').textContent, price: card.querySelector('.plan-price').textContent, detail: card.querySelector('.plan-detail').textContent, href: card.querySelector('a').getAttribute('href'), top: card.getBoundingClientRect().top, left: card.getBoundingClientRect().left })), noteBottom: note.bottom, overlaps, animation: getComputedStyle(cards[0]).animationName };
+      });
+      assert.equal(layout.height, viewport.height);
+      assert.ok(layout.content <= layout.height + 1 && layout.noteBottom <= viewport.height + 1);
+      assert.ok(layout.pageWidth <= viewport.width && !layout.overlaps);
+      assert.deepEqual(layout.cards.map((card) => [card.name, card.price, card.detail]), [['Cabelo', 'R$ 55,00', '2 vezes no mês'], ['Barba', 'R$ 100,00', 'Consulte as condições'], ['Cabelo + barba', 'R$ 200,00', '4 vezes no mês']]);
+      assert.ok(layout.cards.every((card) => card.href === 'https://wa.me/5500000000000'));
+      assert.equal(layout.animation, 'none');
+      if (viewport.width === 390 || viewport.width === 320 || viewport.width === 768) assert.ok(layout.cards[0].top < layout.cards[1].top && layout.cards[1].top < layout.cards[2].top);
+      if (viewport.width === 1440 || viewport.width === 1024) assert.ok(layout.cards[0].left < layout.cards[1].left && layout.cards[1].left < layout.cards[2].left);
+      assert.deepEqual(errors, []);
+    } finally { await page.close(); }
+  });
+}
+
 for (const viewport of [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 568 }, { width: 568, height: 320 }]) {
   test(`serviços são legíveis e cabem na tela em ${viewport.width}x${viewport.height}`, async () => {
     const { page, errors } = await openPage(viewport, { reducedMotion: 'reduce' });
