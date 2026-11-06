@@ -11,6 +11,7 @@ import './small-sections.css';
 import './services.css';
 import './plans.css';
 import './locations.css';
+import './footer.css';
 
 // Fotografia principal; substitua o arquivo em /public/images quando necessário.
 const heroImage = '/images/dudu-recorte.webp';
@@ -176,7 +177,22 @@ function App() {
       </section>
     </main>
 
-    <footer className="footer"><div className="wrap footer-inner"><a href="#inicio" className="brand footer-brand"><span>DUDU</span><small>BARBER SHOP</small></a><p>Uma história de cuidado e dedicação.</p><a href="https://www.instagram.com/dudu.barbershop01/" target="_blank" rel="noreferrer">INSTAGRAM <Arrow diagonal /></a></div><div className="wrap footer-bottom"><span>© {new Date().getFullYear()} DUDU BARBER SHOP</span><a href="#inicio">VOLTAR AO TOPO ↑</a></div></footer>
+    <footer className="footer">
+      <div className="wrap footer-content">
+        <div className="footer-main">
+          <div className="footer-about">
+            <div className="footer-logo" aria-label="Dudu Barber Shop"><span>DUDU</span><small>BARBER SHOP</small></div>
+            <p>Uma história de cuidado e dedicação.</p>
+          </div>
+          <nav className="footer-nav" aria-label="Navegação do rodapé">
+            <span>Explore</span>
+            <div className="footer-nav-links"><a href="#historia">História</a><a href="#equipe">Equipe</a><a href="#servicos">Serviços</a><a href="#planos">Planos</a><a href="#unidades">Unidades</a></div>
+          </nav>
+          <div className="footer-social"><span>Acompanhe</span><a href="https://www.instagram.com/dudu.barbershop01/" target="_blank" rel="noreferrer">Instagram <Arrow diagonal /></a></div>
+        </div>
+        <div className="footer-meta"><span>© {new Date().getFullYear()} Dudu Barber Shop</span><a href="#inicio">Voltar ao topo <span aria-hidden="true">↑</span></a></div>
+      </div>
+    </footer>
     <a className="whatsapp" href={whatsapp} target="_blank" rel="noreferrer" aria-label="Falar com a Dudu Barber Shop pelo WhatsApp"><WhatsAppIcon /></a>
   </>;
 }

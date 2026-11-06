@@ -343,6 +343,34 @@ test('as cidades e a chamada entram uma vez e permanecem visíveis ao voltar', a
   } finally { await page.close(); }
 });
 
+for (const viewport of [{ width: 1440, height: 900 }, { width: 768, height: 1024 }, { width: 320, height: 568 }]) {
+  test(`rodapé mantém navegação e contato acessíveis em ${viewport.width}x${viewport.height}`, async () => {
+    const { page, errors } = await openPage(viewport, { reducedMotion: 'reduce' });
+    try {
+      await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' }));
+      const footer = await page.locator('.footer').evaluate((section) => {
+        const links = [...section.querySelectorAll('.footer-nav a')];
+        const topLink = section.querySelector('.footer-meta a');
+        const topBox = topLink.getBoundingClientRect();
+        const floatBox = document.querySelector('.whatsapp').getBoundingClientRect();
+        const overlaps = topBox.right > floatBox.left && topBox.left < floatBox.right && topBox.bottom > floatBox.top && topBox.top < floatBox.bottom;
+        const social = section.querySelector('.footer-social a');
+        return { width: document.documentElement.scrollWidth, targets: links.map((link) => link.getAttribute('href')), valid: links.every((link) => document.querySelector(link.getAttribute('href'))), social: social.getAttribute('href'), target: social.getAttribute('target'), rel: social.getAttribute('rel'), overlaps };
+      });
+      assert.ok(footer.width <= viewport.width && !footer.overlaps);
+      assert.deepEqual(footer.targets, ['#historia', '#equipe', '#servicos', '#planos', '#unidades']);
+      assert.ok(footer.valid);
+      assert.equal(footer.social, 'https://www.instagram.com/dudu.barbershop01/');
+      assert.equal(footer.target, '_blank');
+      assert.ok(footer.rel.includes('noreferrer'));
+      await page.locator('.footer-meta a').click();
+      await page.waitForFunction(() => window.scrollY < 2);
+      assert.equal(new URL(page.url()).hash, '#inicio');
+      assert.deepEqual(errors, []);
+    } finally { await page.close(); }
+  });
+}
+
 for (const viewport of [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 568 }, { width: 568, height: 320 }]) {
   test(`cidades e contato permanecem visíveis em ${viewport.width}x${viewport.height}`, async () => {
     const { page, errors } = await openPage(viewport, { reducedMotion: 'reduce' });
