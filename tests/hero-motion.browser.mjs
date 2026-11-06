@@ -123,6 +123,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
           button: rect('.hero-button'), cities: rect('.hero-cities'),
           wordLayer: Number(getComputedStyle(document.querySelector('.hero-word')).zIndex),
           photoLayer: Number(getComputedStyle(document.querySelector('.hero-visual')).zIndex),
+          contentLayer: Number(getComputedStyle(document.querySelector('.hero-content')).zIndex),
           buttonTextLines: range.getClientRects().length, width: document.documentElement.scrollWidth,
         };
       });
@@ -133,7 +134,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
       assert.ok(layout.title.top >= 0 && layout.button.bottom <= layout.cities.top && layout.cities.bottom <= viewport.height, 'A chamada, o botão e as cidades precisam caber sem sobreposição.');
       assert.equal(layout.buttonTextLines, 1, 'O texto do botão deve caber em uma linha.');
       if (viewport.width <= 640 && viewport.height > viewport.width) {
-        assert.ok(layout.title.top >= layout.photo.bottom - 20, 'A chamada deve ficar abaixo da maior parte do retrato no celular.');
+        assert.ok(layout.photo.bottom > layout.title.top && layout.contentLayer > layout.photoLayer, 'A parte inferior do retrato deve ficar atrás da chamada no celular.');
       }
       if (viewport.width <= 900 && viewport.height > viewport.width) {
         const coverage = await page.evaluate(() => {
@@ -165,8 +166,9 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
             return covered / total;
           });
         });
-        assert.equal(coverage.filter((ratio) => ratio > 0.35).length, 1, `A cabeça deve cobrir principalmente uma letra: ${coverage}`);
-        assert.ok(coverage.filter((ratio) => ratio <= 0.35).every((ratio) => ratio < 0.3), `As outras letras devem continuar visíveis: ${coverage}`);
+        const ordered = [...coverage].sort((a, b) => b - a);
+        assert.ok(ordered[0] > 0.2 && ordered[0] < 0.7, `A cabeça deve cobrir apenas parte de uma letra: ${coverage}`);
+        assert.ok(ordered[1] < 0.25, `As outras letras devem continuar visíveis: ${coverage}`);
       }
       assert.deepEqual(errors, []);
     } finally { await page.close(); }
