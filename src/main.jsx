@@ -8,6 +8,7 @@ import './home.css';
 import './story.css';
 import './team.css';
 import './small-sections.css';
+import './services.css';
 
 // Fotografia principal; substitua o arquivo em /public/images quando necessário.
 const heroImage = '/images/dudu-recorte.webp';
@@ -15,9 +16,9 @@ const heroImage = '/images/dudu-recorte.webp';
 const whatsapp = 'https://wa.me/5500000000000';
 
 const services = [
-  ['01', 'Cabelo', 'Corte social, degradê e corte com tesoura.'],
-  ['02', 'Barba', 'Barba, barba terapia e cuidados para o seu estilo.'],
-  ['03', 'Mais cuidados', 'Sobrancelha, limpeza facial e outros serviços.'],
+  ['01', 'Cabelo', 'Corte social, degradê e tesoura.', 'hair'],
+  ['02', 'Barba', 'Barba e barboterapia.', 'beard'],
+  ['03', 'Mais cuidados', 'Sobrancelha e limpeza facial.', 'care'],
 ];
 
 const plans = [
@@ -40,11 +41,20 @@ function BarberPole() {
   return <svg className="brand-pole" viewBox="0 0 28 50" fill="none" aria-hidden="true"><path d="M9 7V5a5 5 0 0 1 10 0v2M9 43v2a5 5 0 0 0 10 0v-2M6 9h16M6 41h16M9 9h10a2 2 0 0 1 2 2v28a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2Z" stroke="currentColor" strokeWidth="1.5"/><path d="m8 21 12-10v7L8 28v-7Zm0 12 12-10v7L8 40v-7Z" fill="#b92732"/><path d="M8 21 20 11M8 28l12-10M8 33l12-10M8 40l12-10" stroke="currentColor" strokeWidth=".8"/></svg>;
 }
 
+function ServiceIcon({ type }) {
+  return <svg className="service-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {type === 'hair' && <><circle cx="15" cy="48" r="8"/><circle cx="49" cy="48" r="8"/><path d="M20.5 42 52 9 35 37M43.5 42 12 9l17 28"/><circle cx="32" cy="31" r="1.5" fill="currentColor" stroke="none"/></>}
+    {type === 'beard' && <><path d="M12 16 46 23l-2 8-34-7 2-8ZM43 30c5 1 9 4 9 8 0 7-10 12-26 17l-12 3c-5 1-7-1-7-3 0-3 3-4 8-6l11-5c7-3 12-7 13-13"/><path d="M14 18l28 6M45 35h.1"/></>}
+    {type === 'care' && <><path d="M13 28v-6C13 12 21 7 32 7s19 5 19 15v6M13 28l1 11c1 9 8 14 18 18 10-4 17-9 18-18l1-11"/><path d="M14 23c8 1 14-2 18-7 5 5 11 8 18 7M21 31c2 2 5 2 7 0m8 0c2 2 5 2 7 0M23 42c3-2 6-2 9 0 3-2 6-2 9 0-1 5-4 8-9 9-5-1-8-4-9-9Z"/></>}
+  </svg>;
+}
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const heroRef = useHeroMotion();
   const storyRef = useRevealOnce();
   const teamRef = useRevealOnce();
+  const servicesRef = useRevealOnce();
   const scrollToStory = useStoryScroll();
   const closeMenu = () => setMenuOpen(false);
 
@@ -111,10 +121,18 @@ function App() {
         </div>
       </section>
 
-      <section className="services section-dark" id="servicos">
-        <div className="wrap"><div className="section-head"><div><p className="section-label"><span>03 /</span> O QUE FAZEMOS</p><h2>Seu estilo.<br /><em>Nosso cuidado.</em></h2></div><p>Do corte aos detalhes, conheça alguns dos serviços da barbearia.</p></div>
-          <div className="service-list">{services.map(([number, name, description]) => <article className="service-row" key={number}><span className="service-number">{number}</span><h3>{name}</h3><p>{description}</p><Arrow diagonal /></article>)}</div>
-          <div className="services-bottom"><p>Para saber mais sobre os serviços e valores, fale com a equipe.</p><a className="text-link light-link" href={whatsapp} target="_blank" rel="noreferrer">CONSULTAR PELO WHATSAPP <Arrow diagonal /></a></div>
+      <section className="services" id="servicos" ref={servicesRef} aria-labelledby="services-title">
+        <div className="wrap services-inner">
+          <div className="services-header">
+            <div className="services-heading"><p className="section-label">O QUE FAZEMOS</p><h2 id="services-title">Cuidado em<br />cada <em>detalhe.</em></h2></div>
+            <p className="services-intro">Conheça os serviços da Dudu Barber Shop.</p>
+          </div>
+          <div className="services-grid">{services.map(([number, name, description, icon]) => <article className="service-item" key={number}>
+            <div className="service-item-number"><span>{number}</span></div>
+            <ServiceIcon type={icon} />
+            <div className="service-item-copy"><h3>{name}</h3><p>{description}</p></div>
+          </article>)}</div>
+          <a className="services-link" href={whatsapp} target="_blank" rel="noreferrer">Consultar pelo WhatsApp <Arrow diagonal /></a>
         </div>
       </section>
 

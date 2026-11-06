@@ -292,6 +292,46 @@ test('a equipe entra em cena uma vez e permanece visível ao voltar', async () =
   } finally { await page.close(); }
 });
 
+test('os serviços aparecem com animações apenas na primeira visita', async () => {
+  const { page, errors } = await openPage({ width: 1440, height: 900 });
+  try {
+    await page.locator('#servicos').evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+    await page.waitForFunction(() => document.querySelector('.services').classList.contains('is-revealed'));
+    const names = await page.locator('.service-item').evaluateAll((elements) => elements.map((element) => getComputedStyle(element).animationName));
+    assert.deepEqual(names, ['services-from-bottom', 'services-from-bottom', 'services-from-bottom']);
+    await page.waitForTimeout(1600);
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    await page.locator('#servicos').evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+    await page.waitForTimeout(150);
+    const items = await page.locator('.services-heading, .services-intro, .service-item, .services-link').evaluateAll((elements) => elements.map((element) => ({ opacity: Number(getComputedStyle(element).opacity), animations: element.getAnimations().length })));
+    assert.ok(items.every((item) => item.opacity === 1 && item.animations === 0));
+    assert.deepEqual(errors, []);
+  } finally { await page.close(); }
+});
+
+for (const viewport of [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 568 }, { width: 568, height: 320 }]) {
+  test(`serviços são legíveis e cabem na tela em ${viewport.width}x${viewport.height}`, async () => {
+    const { page, errors } = await openPage(viewport, { reducedMotion: 'reduce' });
+    try {
+      await page.locator('#servicos').evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+      const layout = await page.locator('.services').evaluate((section) => {
+        const items = [...section.querySelectorAll('.service-item')];
+        const link = section.querySelector('.services-link');
+        return { height: section.clientHeight, content: section.scrollHeight, pageWidth: document.documentElement.scrollWidth, items: items.map((item) => ({ title: item.querySelector('h3').textContent, top: item.getBoundingClientRect().top, left: item.getBoundingClientRect().left })), linkBottom: link.getBoundingClientRect().bottom, href: link.getAttribute('href'), animation: getComputedStyle(items[0]).animationName };
+      });
+      assert.equal(layout.height, viewport.height);
+      assert.ok(layout.content <= layout.height + 1);
+      assert.ok(layout.pageWidth <= viewport.width && layout.linkBottom <= viewport.height + 1);
+      assert.deepEqual(layout.items.map((item) => item.title), ['Cabelo', 'Barba', 'Mais cuidados']);
+      assert.equal(layout.href, 'https://wa.me/5500000000000');
+      assert.equal(layout.animation, 'none');
+      if (viewport.width === 390 || viewport.width === 320 || viewport.width === 768) assert.ok(layout.items[0].top < layout.items[1].top && layout.items[1].top < layout.items[2].top);
+      if (viewport.width === 1440 || viewport.width === 1024) assert.ok(layout.items[0].left < layout.items[1].left && layout.items[1].left < layout.items[2].left);
+      assert.deepEqual(errors, []);
+    } finally { await page.close(); }
+  });
+}
+
 for (const viewport of [{ width: 1440, height: 900 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 568 }, { width: 568, height: 320 }]) {
   test(`equipe e história ocupam a tela em ${viewport.width}x${viewport.height}`, async () => {
     const { page, errors } = await openPage(viewport, { reducedMotion: 'reduce' });
