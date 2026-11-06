@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useHeroMotion } from './hooks/useHeroMotion.js';
+import { useRevealOnce } from './hooks/useRevealOnce.js';
 import { useStoryScroll } from './hooks/useStoryScroll.js';
 import './style.css';
 import './home.css';
+import './story.css';
 
 // Fotografia principal; substitua o arquivo em /public/images quando necessário.
 const heroImage = '/images/dudu-recorte.webp';
@@ -39,6 +41,7 @@ function BarberPole() {
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const heroRef = useHeroMotion();
+  const storyRef = useRevealOnce();
   const scrollToStory = useStoryScroll();
   const closeMenu = () => setMenuOpen(false);
 
@@ -78,10 +81,14 @@ function App() {
         <div className="hero-cities wrap" aria-label="Unidades no Rio Grande do Norte"><span className="city-pin" aria-hidden="true">●</span><span>São José de Mipibu</span><i aria-hidden="true"></i><span>Goianinha</span><i aria-hidden="true"></i><span>Nísia Floresta</span><span className="state">RN</span></div>
       </section>
 
-      <section className="story section-light" id="historia" tabIndex="-1">
+      <section className="story section-light" id="historia" tabIndex="-1" ref={storyRef} aria-labelledby="story-title">
         <div className="wrap story-grid">
-          <div><p className="section-label"><span>01 /</span> NOSSA HISTÓRIA</p><h2>Uma história<br />feita <em>de perto.</em></h2></div>
-          <div className="story-copy"><p className="lead">Tudo começou em 2016, com o sonho de construir o próprio negócio.</p><p>A Dudu Barber Shop nasceu do trabalho e da dedicação de um casal de jovens empreendedores. Ao longo da trajetória, a formação de novos barbeiros também passou a fazer parte dessa história.</p><p>Hoje, a marca está presente em São José de Mipibu, Nísia Floresta e Goianinha.</p><a className="text-link" href="https://www.instagram.com/dudu.barbershop01/" target="_blank" rel="noreferrer">ACOMPANHE NO INSTAGRAM <Arrow diagonal /></a></div>
+          <div className="story-heading"><p className="section-label"><span>01 /</span> NOSSA HISTÓRIA</p><h2 id="story-title">De um <em>sonho,</em><br />nasceu uma história.</h2></div>
+          <figure className="story-visual">
+            <img src="/images/dudu-historia.webp" alt="Dudu aparando a barba de um cliente na barbearia" width="1170" height="1180" loading="lazy" decoding="async" />
+            <figcaption className="story-year"><span>DESDE</span><strong>2016</strong></figcaption>
+          </figure>
+          <div className="story-copy"><p className="story-intro">Em <strong>2016</strong>, um casal de jovens empreendedores decidiu transformar o sonho de ter o próprio negócio em realidade. Assim começou a história da Dudu Barber Shop.</p><p>Com o tempo, a formação de novos barbeiros também passou a fazer parte dessa trajetória. Hoje, a marca está presente em São José de Mipibu, Nísia Floresta e Goianinha.</p><a className="story-link" href="#equipe">Conheça a equipe <Arrow diagonal /></a></div>
         </div>
       </section>
 

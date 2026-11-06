@@ -225,3 +225,52 @@ test('a preferência de movimento reduzido desativa as animações e o parallax'
     assert.ok(Math.abs((top - initial.top) + 200) < 2, 'A foto deve acompanhar a página sem parallax.');
   } finally { await page.close(); }
 });
+
+test('a história revela foto e texto uma vez ao entrar na tela', async () => {
+  const { page, errors } = await openPage({ width: 1440, height: 900 });
+  try {
+    assert.equal(await page.locator('.story').evaluate((element) => element.classList.contains('reveal-pending')), true);
+    await page.evaluate(() => window.scrollTo({ top: innerHeight, behavior: 'instant' }));
+    await page.waitForFunction(() => document.querySelector('.story').classList.contains('is-revealed'));
+    const animations = await page.evaluate(() => ({
+      photo: getComputedStyle(document.querySelector('.story-visual')).animationName,
+      heading: getComputedStyle(document.querySelector('.story-heading')).animationName,
+      copy: getComputedStyle(document.querySelector('.story-copy')).animationName,
+    }));
+    assert.deepEqual(animations, { photo: 'story-from-left', heading: 'story-from-right', copy: 'story-from-right' });
+    await page.waitForTimeout(1500);
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    await page.waitForTimeout(100);
+    await page.evaluate(() => window.scrollTo({ top: innerHeight, behavior: 'instant' }));
+    await page.waitForTimeout(150);
+    const after = await page.locator('.story-visual, .story-heading, .story-copy').evaluateAll((elements) => elements.map((element) => ({ opacity: Number(getComputedStyle(element).opacity), animations: element.getAnimations().length })));
+    assert.ok(after.every((element) => element.opacity === 1 && element.animations === 0), 'A história não deve piscar ou repetir a entrada.');
+    assert.deepEqual(errors, []);
+  } finally { await page.close(); }
+});
+
+for (const viewport of [{ width: 1440, height: 900 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 568 }, { width: 568, height: 320 }]) {
+  test(`história e fotografia cabem em ${viewport.width}x${viewport.height}`, async () => {
+    const { page, errors } = await openPage(viewport, { reducedMotion: 'reduce' });
+    try {
+      await page.evaluate(() => document.querySelector('#historia').scrollIntoView({ behavior: 'instant' }));
+      await page.waitForFunction(() => document.querySelector('.story-visual img').naturalWidth > 0);
+      const layout = await page.evaluate(() => {
+        const section = document.querySelector('.story');
+        const photo = document.querySelector('.story-visual img');
+        const link = document.querySelector('.story-link');
+        const box = link.getBoundingClientRect();
+        return { height: section.clientHeight, scrollHeight: section.scrollHeight, pageWidth: document.documentElement.scrollWidth, photoWidth: photo.naturalWidth, alt: photo.alt, linkBottom: box.bottom, linkHref: link.getAttribute('href'), animation: getComputedStyle(document.querySelector('.story-heading')).animationName };
+      });
+      assert.equal(layout.height, viewport.height);
+      assert.ok(layout.scrollHeight <= layout.height + 1, 'A seção deve caber na tela verificada.');
+      assert.ok(layout.pageWidth <= viewport.width);
+      assert.equal(layout.photoWidth, 1170);
+      assert.ok(layout.alt.includes('barba'));
+      assert.ok(layout.linkBottom <= viewport.height);
+      assert.equal(layout.linkHref, '#equipe');
+      assert.equal(layout.animation, 'none');
+      assert.deepEqual(errors, []);
+    } finally { await page.close(); }
+  });
+}
