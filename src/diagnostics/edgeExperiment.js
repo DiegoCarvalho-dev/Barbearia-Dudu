@@ -21,46 +21,49 @@ export function startEdgeExperiment() {
   const visual = window.visualViewport;
   let frame = 0;
   const colors = new WeakMap();
-  const topState = { current: null, pending: null, timer: 0 };
-  const bottomState = { current: null, pending: null, timer: 0 };
+  const topState = { current: null, section: null, timer: 0 };
+  const bottomState = { current: null, section: null, timer: 0 };
 
   const clearPending = (state) => {
     window.clearTimeout(state.timer);
     state.timer = 0;
-    state.pending = null;
   };
-  const setStableColor = (edge, state, color) => {
-    if (state.current === null) {
-      state.current = color;
-      edge.style.backgroundColor = color;
-      return;
-    }
-    if (color === state.current) {
+  const setStableColor = (edge, state, next, elements, point) => {
+    const commit = () => {
       clearPending(state);
+      state.section = next.section;
+      if (state.current !== next.color) {
+        state.current = next.color;
+        edge.style.backgroundColor = next.color;
+      }
+    };
+    if (state.current === null) return commit();
+    if (next.color === state.current) {
+      clearPending(state);
+      state.section = next.section;
       return;
     }
-    if (color === state.pending) return;
+
+    // Conservar a cor perto da divisa evita oscilar com pequenos movimentos.
+    const previous = elements.find(({ element }) => element === state.section);
+    const nearBoundary = previous && previous.rect.top <= point + 12 && previous.rect.bottom >= point - 12;
+    if (!nearBoundary) return commit();
     clearPending(state);
-    state.pending = color;
-    state.timer = window.setTimeout(() => {
-      state.current = state.pending;
-      state.pending = null;
-      state.timer = 0;
-      edge.style.backgroundColor = state.current;
-    }, 120);
+    // Quando a rolagem para exatamente na divisa, a cor correta ainda aparece.
+    state.timer = window.setTimeout(commit, 230);
   };
 
   const colorAt = (elements, point) => {
     const match = elements.find(({ rect }) => rect.top <= point && rect.bottom > point);
-    if (!match) return '#101010';
+    if (!match) return { section: null, color: '#101010' };
     const section = match.element;
     // A Home usa gradiente, que não é exposto como background-color.
-    if (section.id === 'inicio') return '#100d0d';
-    if (colors.has(section)) return colors.get(section);
+    if (section.id === 'inicio') return { section, color: '#100d0d' };
+    if (colors.has(section)) return { section, color: colors.get(section) };
     const color = getComputedStyle(section).backgroundColor;
     const result = color === 'rgba(0, 0, 0, 0)' ? '#101010' : color;
     colors.set(section, result);
-    return result;
+    return { section, color: result };
   };
 
   const update = () => {
@@ -78,10 +81,10 @@ export function startEdgeExperiment() {
     const elements = sections().map((element) => ({ element, rect: element.getBoundingClientRect() }));
     const offsetTop = visual?.offsetTop ?? 0;
     const height = visual?.height ?? window.innerHeight;
-    const topColor = colorAt(elements, offsetTop + 1);
-    const bottomColor = colorAt(elements, offsetTop + Math.max(1, height - 1));
-    setStableColor(topEdge, topState, topColor);
-    setStableColor(bottomEdge, bottomState, bottomColor);
+    const topPoint = offsetTop + 1;
+    const bottomPoint = offsetTop + Math.max(1, height - 1);
+    setStableColor(topEdge, topState, colorAt(elements, topPoint), elements, topPoint);
+    setStableColor(bottomEdge, bottomState, colorAt(elements, bottomPoint), elements, bottomPoint);
   };
   const requestUpdate = () => {
     if (!frame) frame = window.requestAnimationFrame(update);

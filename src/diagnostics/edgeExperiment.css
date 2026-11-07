@@ -1,12 +1,80 @@
+/* A rolagem pertence à página; se o conteúdo crescer, a seção cresce junto. */
+@media (max-width: 900px) and (orientation: portrait) {
+  .story, .team, .services, .plans, .locations {
+    height: auto;
+    min-height: 100vh;
+    max-height: none;
+    overflow: visible;
+  }
+
+  @supports (height: 100dvh) {
+    .story, .team, .services, .plans, .locations { min-height: 100dvh; }
+  }
+
+  @supports (overflow-x: clip) {
+    .story, .team, .services, .plans, .locations { overflow-x: clip; }
+  }
+}
+
 /* A altura pequena é estável enquanto as barras móveis aparecem e somem. */
 @media (max-width: 640px) and (orientation: portrait) {
+  .story, .team, .services, .plans {
+    padding-block: clamp(16px, calc(20svh - 124px), 24px);
+  }
+
+  .story-grid, .team-grid { row-gap: clamp(10px, 1.6svh, 22px); }
+  .story-visual, .team-visual {
+    width: min(100%, max(34svh, calc(70svh - 252px)), 430px);
+  }
+  .story h2, .team h2 { font-size: clamp(29px, 8vw, 44px); }
+  .story-copy, .team-copy { font-size: clamp(15px, 4vw, 18px); line-height: 1.45; }
+  .story-copy p, .team-copy p { margin-bottom: clamp(8px, 1.3svh, 14px); }
+  .story-link, .team-link { min-height: clamp(32px, calc(15svh - 73px), 38px); }
+
+  .services .section-label { margin-bottom: clamp(9px, calc(12.5svh - 78.5px), 14px); }
+  .services h2 { font-size: clamp(32px, 8vw, 50px); }
+  .services-header { gap: clamp(8px, calc(15svh - 97px), 14px); }
+  .services-grid { margin-top: clamp(14px, calc(20svh - 126px), clamp(20px, 3svh, 30px)); }
+  .service-item {
+    min-height: clamp(67px, calc(32.5svh - 160.5px), 80px);
+    padding-block: clamp(8px, calc(10svh - 62px), 12px);
+  }
+  .service-item h3 { font-size: clamp(20px, calc(5svh - 15px), 22px); }
+  .services-link { margin-top: clamp(12px, calc(20svh - 128px), 20px); }
+
+  .plans .section-label { margin-bottom: clamp(8px, calc(10svh - 62px), 12px); }
+  .plans h2 { font-size: clamp(31px, 7.5vw, 48px); }
+  .plans-intro {
+    font-size: clamp(14px, 3.8vw, 15px);
+    margin-top: clamp(7px, calc(7.5svh - 45.5px), 10px);
+  }
+  .plans .plan-grid {
+    gap: clamp(7px, calc(7.5svh - 45.5px), 10px);
+    margin-top: clamp(12px, calc(20svh - 128px), 20px);
+  }
+  .plans .plan-card {
+    padding-block: clamp(9px, calc(12.5svh - 78.5px), 14px);
+    padding-inline: clamp(12px, calc(10svh - 58px), 16px);
+  }
+  .plans .plan-card h3 { font-size: clamp(18px, 4.6vw, 20px); }
+  .plans .plan-price { font-size: clamp(22px, 5vw, 30px); }
+  .plans .plan-detail { font-size: clamp(12px, 3.3vw, 13px); }
+  .plans .plan-card a {
+    margin-top: clamp(2px, calc(7.5svh - 50.5px), 5px);
+    min-height: clamp(30px, calc(10svh - 40px), 34px);
+  }
+  .plans .plan-note {
+    margin-top: clamp(9px, calc(12.5svh - 78.5px), 14px);
+    font-size: clamp(11px, 2.9vw, 12px);
+  }
+
   .locations { padding-block: clamp(16px, calc(20svh - 124px), clamp(24px, 5svh, 70px)); }
   .locations-brand {
-    font-size: clamp(30px, calc(12svh - 54px), clamp(34px, 9vw, 46px));
+    font-size: clamp(34px, 9vw, 46px);
     margin-bottom: clamp(16px, calc(15svh - 89px), clamp(22px, 3svh, 32px));
   }
   .locations-brand small {
-    font-size: clamp(7px, calc(5svh - 28px), 9px);
+    font-size: clamp(9px, 2.4vw, 10px);
     margin-top: clamp(7px, calc(5svh - 28px), 9px);
   }
   .locations-brand::after { margin-top: clamp(7px, calc(5svh - 28px), 9px); }
