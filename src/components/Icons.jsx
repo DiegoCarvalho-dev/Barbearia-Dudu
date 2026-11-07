@@ -1,7 +1,7 @@
 import React from 'react';
 
 export function Arrow({ diagonal = false }) {
-  return <span aria-hidden="true" className="arrow">{diagonal ? '↗' : '↘'}</span>;
+  return <span aria-hidden="true" className="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" focusable="false"><path d={diagonal ? 'M5 19 19 5M8 5h11v11' : 'M5 5l14 14M8 19h11V8'} /></svg></span>;
 }
 
 export function WhatsAppIcon() {

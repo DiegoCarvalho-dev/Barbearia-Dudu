@@ -1,0 +1,77 @@
+/* Setas vetoriais evitam que navegadores móveis as substituam por emoji. */
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  vertical-align: middle;
+}
+.arrow svg { display: block; width: 1em; height: 1em; }
+
+/* A janela dinâmica acompanha as barras que aparecem e somem no celular. */
+@supports not (height: 100svh) {
+  .hero, .story, .team, .services, .plans, .locations {
+    height: 100vh;
+    max-height: 100vh;
+  }
+}
+@supports (height: 100dvh) {
+  .hero, .story, .team, .services, .plans, .locations {
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+}
+
+/* Em telas estreitas, a foto e a leitura recebem mais destaque. */
+@media (max-width: 640px), (max-width: 900px) and (orientation: portrait) {
+  .story-grid, .team-grid { row-gap: clamp(14px, 2dvh, 22px); }
+  .story-visual, .team-visual { width: min(100%, 42dvh, 430px); }
+  .story .section-label, .team .section-label { font-size: 11px; }
+  .story h2, .team h2 { font-size: clamp(32px, 8.2vw, 44px); }
+  .story-copy, .team-copy { font-size: clamp(15px, 4vw, 18px); line-height: 1.5; }
+  .story-link, .team-link { min-height: 38px; font-size: 10px; }
+
+  .services-intro, .service-item p { font-size: 15px; }
+  .locations-brand { font-size: clamp(34px, 9vw, 46px); }
+  .locations-brand small { font-size: 9px; }
+  .locations .section-label { font-size: 11px; }
+  .locations h2 { font-size: clamp(40px, 9vw, 54px); }
+  .locations .locations-intro { font-size: 16px; }
+  .locations .city-list { margin-top: clamp(22px, 3.5dvh, 36px); }
+  .locations .city-row { min-height: clamp(70px, 9dvh, 88px); }
+  .locations .city-row h3 { font-size: clamp(22px, 5.5vw, 28px); }
+}
+
+/* Telas baixas continuam legíveis sem depender de um dispositivo específico. */
+@media (max-width: 640px) and (max-height: 700px) {
+  .story-grid, .team-grid { row-gap: 10px; }
+  .story-visual, .team-visual { width: min(100%, 34dvh, 380px); }
+  .story h2, .team h2 { font-size: clamp(29px, 8vw, 34px); }
+  .story-copy, .team-copy { font-size: 15px; line-height: 1.4; }
+  .story-link, .team-link { min-height: 32px; }
+
+  .locations-brand { font-size: 30px; }
+  .locations h2 { font-size: clamp(35px, 8.5vw, 42px); }
+  .locations .locations-intro { font-size: 15px; }
+  .locations .city-list { margin-top: 14px; }
+  .locations .city-row { min-height: 56px; }
+  .locations .city-row h3 { font-size: 20px; }
+  .locations-cta { max-width: calc(100% - 64px); gap: 14px; padding-inline: 16px; }
+}
+
+@media (max-width: 640px) and (min-height: 701px) and (max-height: 760px) {
+  .story-visual, .team-visual { width: min(100%, 36dvh, 400px); }
+}
+
+/* Em orientação paisagem muito baixa, a página pode crescer sem cortar conteúdo. */
+@media (max-height: 500px) and (max-width: 900px) {
+  .story, .team, .services, .plans, .locations {
+    height: auto;
+    min-height: 100vh;
+    max-height: none;
+    overflow-y: visible;
+  }
+  @supports (height: 100dvh) {
+    .story, .team, .services, .plans, .locations { min-height: 100dvh; }
+  }
+}

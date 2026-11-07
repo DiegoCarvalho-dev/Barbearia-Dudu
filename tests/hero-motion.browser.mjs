@@ -483,6 +483,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 768, height: 1024
     try {
       await page.locator('#equipe').evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
       await page.waitForFunction(() => document.querySelector('.team-visual img').naturalWidth > 0);
+      if (viewport.height <= 500) await page.locator('.team-link').scrollIntoViewIfNeeded();
       const layout = await page.evaluate(() => {
         const story = document.querySelector('.story');
         const team = document.querySelector('.team');
@@ -490,8 +491,12 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 768, height: 1024
         const link = document.querySelector('.team-link');
         return { storyHeight: story.clientHeight, teamHeight: team.clientHeight, contentHeight: team.scrollHeight, pageWidth: document.documentElement.scrollWidth, imageWidth: photo.naturalWidth, alt: photo.alt, link: link.href, animation: getComputedStyle(document.querySelector('.team-heading')).animationName, photoBottom: photo.getBoundingClientRect().bottom, linkBottom: link.getBoundingClientRect().bottom };
       });
-      assert.equal(layout.storyHeight, viewport.height);
-      assert.equal(layout.teamHeight, viewport.height);
+      if (viewport.height > 500) {
+        assert.equal(layout.storyHeight, viewport.height);
+        assert.equal(layout.teamHeight, viewport.height);
+      } else {
+        assert.ok(layout.storyHeight >= viewport.height && layout.teamHeight >= viewport.height);
+      }
       assert.ok(layout.contentHeight <= layout.teamHeight + 1, 'O conteúdo deve caber na tela verificada.');
       assert.ok(layout.pageWidth <= viewport.width);
       assert.equal(layout.imageWidth, 885);
@@ -510,6 +515,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 768, height: 1024
     try {
       await page.evaluate(() => document.querySelector('#historia').scrollIntoView({ behavior: 'instant' }));
       await page.waitForFunction(() => document.querySelector('.story-visual img').naturalWidth > 0);
+      if (viewport.height <= 500) await page.locator('.story-link').scrollIntoViewIfNeeded();
       const layout = await page.evaluate(() => {
         const section = document.querySelector('.story');
         const photo = document.querySelector('.story-visual img');
@@ -518,9 +524,10 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 768, height: 1024
         const box = link.getBoundingClientRect();
         return { height: section.clientHeight, scrollHeight: section.scrollHeight, pageWidth: document.documentElement.scrollWidth, photoWidth: photo.naturalWidth, alt: photo.alt, linkBottom: box.bottom, linkHref: link.getAttribute('href'), animation: getComputedStyle(document.querySelector('.story-heading')).animationName, overflow: getComputedStyle(section).overflowY };
       });
-      assert.equal(layout.height, viewport.height);
+      if (viewport.height > 500) assert.equal(layout.height, viewport.height);
+      else assert.ok(layout.height >= viewport.height);
       if (viewport.height > 400) assert.ok(layout.scrollHeight <= layout.height + 1, 'A seção deve caber na tela verificada.');
-      else assert.equal(layout.overflow, 'auto', 'Em telas muito baixas, o conteúdo deve permanecer rolável.');
+      else assert.equal(layout.overflow, 'visible', 'Em telas muito baixas, o conteúdo deve acompanhar a rolagem da página.');
       assert.ok(layout.pageWidth <= viewport.width);
       assert.equal(layout.photoWidth, 1170);
       assert.ok(layout.alt.includes('barba'));

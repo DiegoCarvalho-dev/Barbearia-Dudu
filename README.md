@@ -74,6 +74,13 @@ npm run test:browser
 
 Os testes usam um navegador Chrome ou Edge instalado. Caso ele não seja encontrado automaticamente, configure a variável `CHROME_PATH` com o caminho do executável.
 
+Para verificar também o mecanismo WebKit, usado pelos navegadores no iPhone, instale o navegador de teste e execute:
+
+```bash
+node node_modules/playwright-core/cli.js install webkit
+npm run test:webkit
+```
+
 ## Organização
 
 ```text

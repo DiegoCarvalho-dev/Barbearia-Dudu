@@ -10,6 +10,7 @@ import './services.css';
 import './plans.css';
 import './locations.css';
 import './footer.css';
+import './viewport.css';
 
 
 createRoot(document.getElementById('root')).render(<App />);
