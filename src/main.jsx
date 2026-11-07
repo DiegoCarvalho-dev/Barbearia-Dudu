@@ -18,3 +18,7 @@ createRoot(document.getElementById('root')).render(<App />);
 if (new URLSearchParams(window.location.search).get('diagnostico') === 'viewport') {
   import('./diagnostics/viewport.js').then(({ startViewportDiagnostic }) => startViewportDiagnostic());
 }
+
+if (new URLSearchParams(window.location.search).get('teste-bordas') === '1') {
+  import('./diagnostics/edgeExperiment.js').then(({ startEdgeExperiment }) => startEdgeExperiment());
+}
