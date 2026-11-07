@@ -14,3 +14,7 @@ import './viewport.css';
 
 
 createRoot(document.getElementById('root')).render(<App />);
+
+if (new URLSearchParams(window.location.search).get('diagnostico') === 'viewport') {
+  import('./diagnostics/viewport.js').then(({ startViewportDiagnostic }) => startViewportDiagnostic());
+}
