@@ -230,6 +230,23 @@ test('o botão percorre a página gradualmente e chega à história', async () =
   } finally { await page.close(); }
 });
 
+test('o botão acompanha mudanças na altura durante e após a transição', async () => {
+  const { page } = await openPage({ width: 390, height: 700 }, { isMobile: true, hasTouch: true });
+  try {
+    await page.waitForTimeout(2200);
+    await page.locator('.hero-button').click();
+    await page.waitForTimeout(250);
+    await page.setViewportSize({ width: 390, height: 780 });
+    await page.waitForTimeout(800);
+    let top = await page.locator('#historia').evaluate((element) => element.getBoundingClientRect().top);
+    assert.ok(Math.abs(top) < 2, `A seção ficou deslocada após a mudança durante a transição: ${top}px`);
+    await page.setViewportSize({ width: 390, height: 810 });
+    await page.waitForTimeout(100);
+    top = await page.locator('#historia').evaluate((element) => element.getBoundingClientRect().top);
+    assert.ok(Math.abs(top) < 2, `A seção ficou deslocada após a mudança ao final da transição: ${top}px`);
+  } finally { await page.close(); }
+});
+
 test('o visitante pode interromper a rolagem do botão', async () => {
   const { page } = await openPage({ width: 1440, height: 900 });
   try {

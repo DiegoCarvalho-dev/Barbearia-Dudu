@@ -79,3 +79,29 @@ test('WebKit: seções acompanham mudanças na altura visível', async () => {
     }
   } finally { await page.close(); }
 });
+
+test('WebKit: o botão acompanha alterações da área visível e mantém a rolagem livre', async () => {
+  const page = await browser.newPage({ viewport: { width: 390, height: 700 }, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
+  try {
+    await page.goto(url, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => document.querySelector('.hero')?.classList.contains('is-in-view'));
+    await page.waitForTimeout(2200);
+    await page.locator('.hero-button').click();
+    await page.waitForTimeout(250);
+    await page.setViewportSize({ width: 390, height: 780 });
+    await page.waitForTimeout(800);
+    let top = await page.locator('#historia').evaluate((element) => element.getBoundingClientRect().top);
+    assert.ok(Math.abs(top) < 2, `Deslocamento após mudança durante a transição: ${top}px`);
+    await page.setViewportSize({ width: 390, height: 810 });
+    await page.waitForTimeout(100);
+    top = await page.locator('#historia').evaluate((element) => element.getBoundingClientRect().top);
+    assert.ok(Math.abs(top) < 2, `Deslocamento após mudança ao final da transição: ${top}px`);
+    await page.evaluate(() => {
+      window.dispatchEvent(new Event('touchstart'));
+      window.scrollBy({ top: 120, behavior: 'instant' });
+    });
+    const moved = await page.evaluate(() => window.scrollY);
+    await page.waitForTimeout(700);
+    assert.ok(Math.abs((await page.evaluate(() => window.scrollY)) - moved) < 2, 'A rolagem manual não deve ser corrigida automaticamente.');
+  } finally { await page.close(); }
+});
