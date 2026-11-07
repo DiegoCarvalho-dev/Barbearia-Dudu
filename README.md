@@ -24,11 +24,12 @@ npm run test:browser
 
 O teste procura Chrome ou Edge nos locais comuns. Se necessário, defina `CHROME_PATH` com o caminho do navegador antes de executá-lo.
 
-## Conteúdo pendente
+## Estrutura e conteúdo pendente
 
-- **Foto principal:** o recorte transparente, gerado por IA a partir da foto fornecida, está em `public/images/dudu-recorte.webp` e é configurado pela constante `heroImage` em `src/main.jsx`. O original está em `referencias/foto-home-original.jpg`. A composição mantém o efeito de parallax e respeita a configuração de movimento reduzido.
-- **WhatsApp:** substitua o número fictício na constante `whatsapp` em `src/main.jsx` antes de divulgar o site.
+- **Código:** `src/App.jsx` reúne as seções; os componentes estão em `src/components`, os dados em `src/data/site.js` e as animações e a rolagem em `src/hooks`.
+- **Fotos:** os arquivos usados no site ficam em `public/images`; os originais ficam em `referencias`, incluindo `foto-equipe-original.jpeg`. O recorte transparente da foto principal, gerado por IA a partir da imagem fornecida, é configurado por `heroImage` em `src/data/site.js`.
+- **WhatsApp:** substitua o número fictício na constante `whatsapp` em `src/data/site.js` antes de divulgar o site.
 - **Planos:** confirme valores e condições com a barbearia. A referência não informa todos os detalhes.
-- **Equipe e unidades:** fotos, nomes, endereços e horários podem ser adicionados quando forem confirmados.
+- **Equipe e unidades:** confirme a foto da equipe e as três cidades. Nomes individuais, endereços e horários podem ser adicionados quando forem informados.
 
 O site não inclui agendamento, pagamentos ou área administrativa.

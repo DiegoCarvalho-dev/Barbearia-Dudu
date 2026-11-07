@@ -6,7 +6,7 @@ Criar uma vitrine digital para a Dudu Barber Shop, com foco em apresentar a marc
 
 ## Direção aprovada
 
-- Home contemporâneo aprovado na terceira proposta visual: fundo preto com vermelho discreto, nome DUDU em destaque atrás do retrato, frase curta e tipografia editorial. O restante do site será revisto posteriormente.
+- Home contemporâneo aprovado: fundo preto com vermelho discreto, nome DUDU em destaque atrás do retrato, frase curta e tipografia editorial.
 - Paleta: preto `#101010`, grafite `#1b1b1b`, branco quente `#f3efea`, cinza `#a8a39f` e vermelho `#c91822` como cor de destaque. As cores podem ser refinadas para garantir contraste.
 - Página inicial com o retrato do dono integrado à tipografia; a imagem atual usa um recorte gerado por IA a partir da foto fornecida e pode ser trocada quando uma nova foto estiver disponível.
 - Prompt utilizado para o recorte: remover somente o fundo da fotografia fornecida e preservar rosto, expressão, proporções, braços cruzados, roupa e enquadramento, produzindo imagem com transparência e sem novos elementos. O recorte foi gerado pela ferramenta interna de imagens e salvo em `public/images/dudu-recorte.webp`.
@@ -14,10 +14,10 @@ Criar uma vitrine digital para a Dudu Barber Shop, com foco em apresentar a marc
 - O retrato é enquadrado sem corte e o efeito respeita a preferência por movimento reduzido e telas móveis.
 - No home, a foto acompanha a janela enquanto o nome ao fundo se desloca em outra velocidade. Após o carregamento dos recursos, a foto entra pela direita e as frases entram por lados diferentes uma única vez por carregamento; ao voltar, apenas o parallax continua. O menu apresenta um traço animado ao passar o mouse.
 - Em celulares, o nome fica maior à altura da cabeça, com o retrato deslocado para a direita e mais abaixo, atrás de parte da chamada. Em tablets, o nome é maior e a chamada fica mais abaixo, com apenas parte de uma letra encoberta pela cabeça.
-- O botão principal do home é claro e arredondado e leva à história com uma rolagem gradual. A animação respeita a preferência por movimento reduzido e pode ser interrompida pela pessoa.
+- O botão principal do home é arredondado e leva à história com uma rolagem gradual. A animação respeita a preferência por movimento reduzido e pode ser interrompida pela pessoa.
 - A marca no cabeçalho é apenas informativa. A frase principal e as cidades recebem um efeito discreto ao passar o mouse, sem indicar que são links.
 - A seção Nossa História segue a direção aprovada: fundo branco, foto do Dudu trabalhando com cantos arredondados e tipografia sem serifa. “Sonho” e “2016” aparecem em vermelho, com efeitos discretos ao passar o mouse, assim como “nossa trajetória” e o link para a equipe. As animações de entrada acontecem apenas na primeira visita à seção. A foto original está em `referencias/foto-historia-original.jpeg` e a versão otimizada em `public/images/dudu-historia.webp`.
-- A seção Nossa Equipe segue a direção preta aprovada: texto à esquerda, fotografia original da equipe à direita, cantos arredondados e destaque vermelho em “diferença”. A foto otimizada está em `public/images/equipe-dudu.webp`. A entrada do texto e da foto acontece apenas uma vez e respeita movimento reduzido; o link leva ao Instagram.
+- A seção Nossa Equipe segue a direção preta aprovada: texto à esquerda, fotografia original da equipe à direita, cantos arredondados e destaque vermelho em “diferença”. A foto otimizada está em `public/images/equipe-dudu.webp` e o original em `referencias/foto-equipe-original.jpeg`. A entrada do texto e da foto acontece apenas uma vez e respeita movimento reduzido; o link leva ao Instagram.
 - Em celulares e tablets estreitos, Nossa História e Nossa Equipe usam uma composição vertical: foto em cima, seguida de título e texto, com a imagem inteira e texto legível. As seções mantêm a altura da janela; em telas excepcionalmente baixas, o conteúdo continua acessível por rolagem interna.
 - A seção O Que Fazemos segue a direção clara aprovada, com título, ícones de traço e três grupos de serviços. Em telas menores, os serviços se reorganizam em linhas; animações sutis ocorrem uma vez e respeitam movimento reduzido. O link do WhatsApp usa um número provisório até ser informado o contato correto.
 - A seção Assinaturas segue a primeira direção escolhida, com fundo off-white quente próximo à paleta anterior, cartões claros e o título “Seu plano, seu estilo.”. Os três preços e condições são demonstrativos e devem ser confirmados com a equipe. As animações de entrada ocorrem uma vez e respeitam movimento reduzido; os links usam o número provisório do WhatsApp.
@@ -30,7 +30,7 @@ Criar uma vitrine digital para a Dudu Barber Shop, com foco em apresentar a marc
 ## Conteúdo acordado
 
 - Apresentação e história da barbearia, sem inventar fatos.
-- Espaço para apresentar a equipe quando os dados e as fotos forem fornecidos.
+- Apresentação da equipe com a foto fornecida; dados individuais dependem de confirmação.
 - Serviços e planos: a referência apresenta cabelo por R$ 55 (duas vezes por mês), barba por R$ 100 e cabelo e barba por R$ 200 (quatro vezes no mês). Valores e condições precisam ser confirmados antes da publicação final; não deduzir condições ausentes.
 - Unidades: São José de Mipibu, Nísia Floresta e Goianinha. Endereços individuais ainda não foram informados.
 - Botão flutuante de WhatsApp com número provisório, substituível antes da publicação final.
@@ -39,12 +39,12 @@ Criar uma vitrine digital para a Dudu Barber Shop, com foco em apresentar a marc
 ## Decisões técnicas
 
 - React com Vite, conforme preferência indicada pelo solicitante e adequado a uma vitrine estática.
-- Conteúdo editável nos arquivos do projeto; imagens reais podem ser integradas depois.
+- Conteúdo em `src/data/site.js`, seções em `src/components` e efeitos em `src/hooks`; imagens otimizadas em `public/images` e originais em `referencias`.
 - Versionamento Git com commits por etapas coerentes e envio ao repositório GitHub informado: `https://github.com/DiegoCarvalho-dev/Barbearia-Dudu`.
 
 ## Pendências de conteúdo
 
-- Imagens autorizadas da equipe e das unidades.
+- Confirmação das imagens usadas e possibilidade de incluir fotos das unidades.
 - Número de WhatsApp definitivo.
 - Confirmação dos valores e das condições completas dos planos.
 - Endereços, horários por unidade e informações adicionais verificadas para enriquecer a história e a apresentação da equipe.

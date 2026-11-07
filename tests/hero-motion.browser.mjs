@@ -37,6 +37,37 @@ async function openPage(viewport, options = {}) {
   return { page, errors };
 }
 
+test('menu móvel, atalho de acessibilidade e imagens funcionam', async () => {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  const errors = [];
+  const failedAssets = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  page.on('response', (response) => {
+    if (response.url().startsWith(url) && response.status() >= 400) failedAssets.push(`${response.status()} ${response.url()}`);
+  });
+  try {
+    await page.goto(url, { waitUntil: 'domcontentloaded' });
+    await page.keyboard.press('Tab');
+    assert.equal(await page.evaluate(() => document.activeElement.className), 'skip-link');
+    await page.keyboard.press('Enter');
+    assert.equal(new URL(page.url()).hash, '#conteudo');
+    const menu = page.locator('.menu-toggle');
+    await menu.click();
+    assert.equal(await menu.getAttribute('aria-expanded'), 'true');
+    await page.locator('#navigation a[href="#servicos"]').click();
+    assert.equal(await menu.getAttribute('aria-expanded'), 'false');
+    assert.equal(new URL(page.url()).hash, '#servicos');
+    for (const selector of ['.hero-photo', '.story-visual img', '.team-visual img']) {
+      const img = page.locator(selector);
+      await img.scrollIntoViewIfNeeded();
+      await img.evaluate((element) => element.decode());
+      assert.ok(await img.evaluate((element) => element.naturalWidth > 0));
+    }
+    assert.deepEqual(failedAssets, []);
+    assert.deepEqual(errors, []);
+  } finally { await page.close(); }
+});
+
 test('a foto e as frases realmente entram em movimento após o carregamento', async () => {
   const { page, errors } = await openPage({ width: 1440, height: 900 });
   try {
