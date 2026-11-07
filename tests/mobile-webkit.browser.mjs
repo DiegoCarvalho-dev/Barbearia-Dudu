@@ -38,10 +38,15 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 320, height: 701 }
           viewport: window.innerHeight,
           visual: window.visualViewport.height,
           width: document.documentElement.scrollWidth,
+          overflow: getComputedStyle(element).overflowY,
         }));
         assert.ok(Math.abs(layout.viewport - layout.visual) <= 1);
-        if (viewport.height > 500 || id === 'inicio') assert.ok(Math.abs(layout.height - layout.viewport) <= 1, `${id}: ${JSON.stringify(layout)}`);
-        else assert.ok(layout.height >= layout.viewport, `${id}: ${JSON.stringify(layout)}`);
+        if (id === 'inicio') assert.ok(Math.abs(layout.height - layout.viewport) <= 1, `${id}: ${JSON.stringify(layout)}`);
+        else {
+          assert.ok(layout.height >= layout.viewport - 1, `${id}: ${JSON.stringify(layout)}`);
+          if (viewport.height > 500) assert.ok(layout.height <= layout.viewport * 1.15, `${id}: ${JSON.stringify(layout)}`);
+          if (layout.height > layout.viewport + 1) assert.equal(layout.overflow, 'visible', `${id}: conteúdo adicional deve ficar na rolagem da página.`);
+        }
         assert.ok(layout.content <= layout.height + 1, `${id}: conteúdo cortado ${JSON.stringify(layout)}`);
         assert.ok(layout.width <= viewport.width);
       }

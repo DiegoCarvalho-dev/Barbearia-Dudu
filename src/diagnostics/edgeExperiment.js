@@ -1,6 +1,6 @@
 import './edgeExperiment.css';
 
-// Protótipo opt-in: testa a extensão de cor das barras do navegador, sem rolar a página.
+// As bordas acompanham as seções sem interferir na rolagem da página.
 export function startEdgeExperiment({ stableViewport = false } = {}) {
   if (stableViewport) document.documentElement.classList.add('viewport-stable-experiment');
   const sections = () => [...document.querySelectorAll('main > section, footer.footer')];

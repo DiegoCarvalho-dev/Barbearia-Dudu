@@ -16,8 +16,7 @@
   }
 }
 
-/* Alternativa de teste: a altura pequena evita que cada seção seja
-   redimensionada quando as barras do navegador mudam durante a rolagem. */
+/* A altura pequena evita redimensionar cada seção durante a rolagem. */
 @media (max-width: 900px) and (orientation: portrait) {
   @supports (height: 100svh) {
     .viewport-stable-experiment .hero {

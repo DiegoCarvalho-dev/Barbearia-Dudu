@@ -7,7 +7,7 @@ import { preview } from 'vite';
 let browser;
 let server;
 let url;
-const testQuery = process.env.EDGE_TEST_STABLE === '1' ? '?teste-estavel=1' : '?teste-bordas=1';
+const testQuery = process.env.EDGE_TEST_STABLE === '1' ? '?teste-estavel=1' : '';
 
 before(async () => {
   server = await preview({ preview: { host: '127.0.0.1', port: 0 }, logLevel: 'silent' });
@@ -27,17 +27,18 @@ after(async () => {
   if (server?.httpServer) await new Promise((resolve, reject) => server.httpServer.close((error) => error ? reject(error) : resolve()));
 });
 
-test('as bordas permanecem isoladas do site normal', async () => {
+test('o endereço normal ativa a versão estável aprovada', async () => {
   const page = await browser.newPage({ viewport: { width: 390, height: 701 }, reducedMotion: 'reduce' });
   try {
     await page.goto(url, { waitUntil: 'networkidle' });
-    assert.equal(await page.locator('.edge-experiment').count(), 0);
-    assert.equal(await page.locator('.locations h2').evaluate((node) => parseFloat(getComputedStyle(node).fontSize)), 40);
-    assert.equal(await page.locator('link[href*="edgeExperiment"]').count(), 0);
+    await page.locator('.edge-experiment-top').waitFor();
+    assert.equal(await page.locator('.edge-experiment').count(), 2);
+    assert.equal(await page.evaluate(() => document.documentElement.classList.contains('viewport-stable-experiment')), true);
+    assert.equal(await page.locator('#equipe').evaluate((node) => getComputedStyle(node).overflowY), 'visible');
   } finally { await page.close(); }
 });
 
-test('a alternativa estável usa a menor altura do navegador sem prender a rolagem', { skip: process.env.EDGE_TEST_STABLE !== '1' }, async () => {
+test('a versão estável usa a menor altura do navegador sem prender a rolagem', async () => {
   const page = await browser.newPage({ viewport: { width: 390, height: 699 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   try {
     await page.goto(`${url}${testQuery}`, { waitUntil: 'networkidle' });
@@ -61,6 +62,30 @@ test('a alternativa estável usa a menor altura do navegador sem prender a rolag
     assert.ok(result.minHeights.every((height) => Math.abs(height - result.smallHeight) < 1));
     assert.equal(result.snap, 'none');
   } finally { await page.close(); }
+});
+
+test('produção corresponde ao link estável aprovado', async () => {
+  for (const viewport of [{ width: 390, height: 699 }, { width: 1440, height: 900 }]) {
+    const page = await browser.newPage({ viewport, reducedMotion: 'reduce' });
+    try {
+      const layouts = [];
+      for (const query of ['', '?teste-estavel=1']) {
+        await page.goto(`${url}${query}`, { waitUntil: 'networkidle' });
+        await page.locator('.edge-experiment-top').waitFor();
+        await page.evaluate(() => document.fonts.ready);
+        layouts.push(await page.evaluate(() => ({
+          stable: document.documentElement.classList.contains('viewport-stable-experiment'),
+          sections: [...document.querySelectorAll('main > section')].map((section) => ({
+            height: section.getBoundingClientRect().height,
+            minHeight: getComputedStyle(section).minHeight,
+            overflowY: getComputedStyle(section).overflowY,
+          })),
+          brandSize: getComputedStyle(document.querySelector('.locations-brand')).fontSize,
+        })));
+      }
+      assert.deepEqual(layouts[0], layouts[1], `O layout de produção deve corresponder ao aprovado em ${viewport.width}px.`);
+    } finally { await page.close(); }
+  }
 });
 
 test('cores estabilizam nas divisões e não impedem rolagem ou toques', async () => {

@@ -21,7 +21,4 @@ if (params.get('diagnostico') === 'viewport') {
   import('./diagnostics/viewport.js').then(({ startViewportDiagnostic }) => startViewportDiagnostic());
 }
 
-const stableViewportTest = params.get('teste-estavel') === '1';
-if (params.get('teste-bordas') === '1' || stableViewportTest) {
-  import('./diagnostics/edgeExperiment.js').then(({ startEdgeExperiment }) => startEdgeExperiment({ stableViewport: stableViewportTest }));
-}
+import('./diagnostics/edgeExperiment.js').then(({ startEdgeExperiment }) => startEdgeExperiment({ stableViewport: true }));

@@ -506,11 +506,13 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 768, height: 1024
         const team = document.querySelector('.team');
         const photo = document.querySelector('.team-visual img');
         const link = document.querySelector('.team-link');
-        return { storyHeight: story.clientHeight, teamHeight: team.clientHeight, contentHeight: team.scrollHeight, pageWidth: document.documentElement.scrollWidth, imageWidth: photo.naturalWidth, alt: photo.alt, link: link.href, animation: getComputedStyle(document.querySelector('.team-heading')).animationName, photoBottom: photo.getBoundingClientRect().bottom, linkBottom: link.getBoundingClientRect().bottom };
+        return { storyHeight: story.clientHeight, teamHeight: team.clientHeight, contentHeight: team.scrollHeight, teamBottom: team.getBoundingClientRect().bottom, storyOverflow: getComputedStyle(story).overflowY, teamOverflow: getComputedStyle(team).overflowY, pageWidth: document.documentElement.scrollWidth, imageWidth: photo.naturalWidth, alt: photo.alt, link: link.href, animation: getComputedStyle(document.querySelector('.team-heading')).animationName, photoBottom: photo.getBoundingClientRect().bottom, linkBottom: link.getBoundingClientRect().bottom };
       });
       if (viewport.height > 500) {
-        assert.equal(layout.storyHeight, viewport.height);
-        assert.equal(layout.teamHeight, viewport.height);
+        assert.ok(layout.storyHeight >= viewport.height && layout.storyHeight <= viewport.height * 1.15);
+        assert.ok(layout.teamHeight >= viewport.height && layout.teamHeight <= viewport.height * 1.15);
+        if (layout.storyHeight > viewport.height + 1) assert.equal(layout.storyOverflow, 'visible');
+        if (layout.teamHeight > viewport.height + 1) assert.equal(layout.teamOverflow, 'visible');
       } else {
         assert.ok(layout.storyHeight >= viewport.height && layout.teamHeight >= viewport.height);
       }
@@ -520,7 +522,9 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 768, height: 1024
       assert.ok(layout.alt.includes('Equipe'));
       assert.ok(layout.link.startsWith('https://www.instagram.com/dudu.barbershop01/'));
       assert.equal(layout.animation, 'none');
-      assert.ok(layout.photoBottom <= viewport.height + 1 && layout.linkBottom <= viewport.height + 1);
+      assert.ok(layout.photoBottom <= Math.max(viewport.height, layout.teamBottom) + 1 && layout.linkBottom <= Math.max(viewport.height, layout.teamBottom) + 1);
+      await page.locator('.team-link').scrollIntoViewIfNeeded();
+      assert.ok(await page.locator('.team-link').evaluate((node) => node.getBoundingClientRect().bottom <= window.innerHeight + 1));
       assert.deepEqual(errors, []);
     } finally { await page.close(); }
   });
@@ -539,16 +543,21 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 768, height: 1024
         const link = document.querySelector('.story-link');
         section.scrollTop = section.scrollHeight;
         const box = link.getBoundingClientRect();
-        return { height: section.clientHeight, scrollHeight: section.scrollHeight, pageWidth: document.documentElement.scrollWidth, photoWidth: photo.naturalWidth, alt: photo.alt, linkBottom: box.bottom, linkHref: link.getAttribute('href'), animation: getComputedStyle(document.querySelector('.story-heading')).animationName, overflow: getComputedStyle(section).overflowY };
+        return { height: section.clientHeight, scrollHeight: section.scrollHeight, sectionBottom: section.getBoundingClientRect().bottom, pageWidth: document.documentElement.scrollWidth, photoWidth: photo.naturalWidth, alt: photo.alt, linkBottom: box.bottom, linkHref: link.getAttribute('href'), animation: getComputedStyle(document.querySelector('.story-heading')).animationName, overflow: getComputedStyle(section).overflowY };
       });
-      if (viewport.height > 500) assert.equal(layout.height, viewport.height);
+      if (viewport.height > 500) {
+        assert.ok(layout.height >= viewport.height && layout.height <= viewport.height * 1.15);
+        if (layout.height > viewport.height + 1) assert.equal(layout.overflow, 'visible');
+      }
       else assert.ok(layout.height >= viewport.height);
       if (viewport.height > 400) assert.ok(layout.scrollHeight <= layout.height + 1, 'A seção deve caber na tela verificada.');
       else assert.equal(layout.overflow, 'visible', 'Em telas muito baixas, o conteúdo deve acompanhar a rolagem da página.');
       assert.ok(layout.pageWidth <= viewport.width);
       assert.equal(layout.photoWidth, 1170);
       assert.ok(layout.alt.includes('barba'));
-      assert.ok(layout.linkBottom <= viewport.height);
+      assert.ok(layout.linkBottom <= Math.max(viewport.height, layout.sectionBottom) + 1);
+      await page.locator('.story-link').scrollIntoViewIfNeeded();
+      assert.ok(await page.locator('.story-link').evaluate((node) => node.getBoundingClientRect().bottom <= window.innerHeight + 1));
       assert.equal(layout.linkHref, '#equipe');
       assert.equal(layout.animation, 'none');
       assert.deepEqual(errors, []);
