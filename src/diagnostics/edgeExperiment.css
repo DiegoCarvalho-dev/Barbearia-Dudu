@@ -1,0 +1,29 @@
+/* A altura pequena é estável enquanto as barras móveis aparecem e somem. */
+@media (max-width: 640px) and (orientation: portrait) {
+  .locations { padding-block: clamp(16px, calc(20svh - 124px), clamp(24px, 5svh, 70px)); }
+  .locations-brand {
+    font-size: clamp(30px, calc(12svh - 54px), clamp(34px, 9vw, 46px));
+    margin-bottom: clamp(16px, calc(15svh - 89px), clamp(22px, 3svh, 32px));
+  }
+  .locations-brand small {
+    font-size: clamp(7px, calc(5svh - 28px), 9px);
+    margin-top: clamp(7px, calc(5svh - 28px), 9px);
+  }
+  .locations-brand::after { margin-top: clamp(7px, calc(5svh - 28px), 9px); }
+  .locations .section-label { margin-bottom: clamp(8px, calc(10svh - 62px), 12px); }
+  .locations h2 { font-size: clamp(35px, calc(12.5svh - 52.5px), clamp(40px, 9vw, 54px)); }
+  .locations .locations-intro {
+    font-size: clamp(15px, 4vw, 16px);
+    margin-top: clamp(10px, calc(10svh - 60px), 14px);
+  }
+  .locations .city-list { margin-top: clamp(14px, calc(20svh - 126px), clamp(22px, 3.5svh, 36px)); }
+  .locations .city-row {
+    min-height: clamp(56px, calc(35svh - 189px), clamp(70px, 9svh, 88px));
+    padding-block: clamp(6px, calc(10svh - 64px), 10px);
+  }
+  .locations .city-row h3 { font-size: clamp(20px, calc(5svh - 15px), clamp(22px, 5.5vw, 28px)); }
+  .locations-cta {
+    min-height: clamp(46px, calc(10svh - 24px), 50px);
+    margin-top: clamp(12px, calc(15svh - 93px), clamp(18px, 2.7svh, 28px));
+  }
+}
