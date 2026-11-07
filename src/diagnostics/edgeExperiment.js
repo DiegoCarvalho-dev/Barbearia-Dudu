@@ -1,7 +1,8 @@
 import './edgeExperiment.css';
 
 // Protótipo opt-in: testa a extensão de cor das barras do navegador, sem rolar a página.
-export function startEdgeExperiment() {
+export function startEdgeExperiment({ stableViewport = false } = {}) {
+  if (stableViewport) document.documentElement.classList.add('viewport-stable-experiment');
   const sections = () => [...document.querySelectorAll('main > section, footer.footer')];
   const makeEdge = (name) => {
     const edge = document.createElement('div');
@@ -105,5 +106,6 @@ export function startEdgeExperiment() {
     visual?.removeEventListener('resize', requestUpdate);
     topEdge.remove();
     bottomEdge.remove();
+    if (stableViewport) document.documentElement.classList.remove('viewport-stable-experiment');
   };
 }

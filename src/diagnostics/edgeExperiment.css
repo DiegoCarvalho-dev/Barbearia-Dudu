@@ -16,6 +16,22 @@
   }
 }
 
+/* Alternativa de teste: a altura pequena evita que cada seção seja
+   redimensionada quando as barras do navegador mudam durante a rolagem. */
+@media (max-width: 900px) and (orientation: portrait) {
+  @supports (height: 100svh) {
+    .viewport-stable-experiment .hero {
+      height: 100svh;
+      max-height: 100svh;
+    }
+    .viewport-stable-experiment .story,
+    .viewport-stable-experiment .team,
+    .viewport-stable-experiment .services,
+    .viewport-stable-experiment .plans,
+    .viewport-stable-experiment .locations { min-height: 100svh; }
+  }
+}
+
 /* A altura pequena é estável enquanto as barras móveis aparecem e somem. */
 @media (max-width: 640px) and (orientation: portrait) {
   .story, .team, .services, .plans {

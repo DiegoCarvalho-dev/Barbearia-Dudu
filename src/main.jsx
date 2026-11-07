@@ -15,10 +15,13 @@ import './viewport.css';
 
 createRoot(document.getElementById('root')).render(<App />);
 
-if (new URLSearchParams(window.location.search).get('diagnostico') === 'viewport') {
+const params = new URLSearchParams(window.location.search);
+
+if (params.get('diagnostico') === 'viewport') {
   import('./diagnostics/viewport.js').then(({ startViewportDiagnostic }) => startViewportDiagnostic());
 }
 
-if (new URLSearchParams(window.location.search).get('teste-bordas') === '1') {
-  import('./diagnostics/edgeExperiment.js').then(({ startEdgeExperiment }) => startEdgeExperiment());
+const stableViewportTest = params.get('teste-estavel') === '1';
+if (params.get('teste-bordas') === '1' || stableViewportTest) {
+  import('./diagnostics/edgeExperiment.js').then(({ startEdgeExperiment }) => startEdgeExperiment({ stableViewport: stableViewportTest }));
 }

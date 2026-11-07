@@ -7,6 +7,7 @@ import { preview } from 'vite';
 let browser;
 let server;
 let url;
+const testQuery = process.env.EDGE_TEST_STABLE === '1' ? '?teste-estavel=1' : '?teste-bordas=1';
 
 before(async () => {
   server = await preview({ preview: { host: '127.0.0.1', port: 0 }, logLevel: 'silent' });
@@ -36,10 +37,36 @@ test('as bordas permanecem isoladas do site normal', async () => {
   } finally { await page.close(); }
 });
 
+test('a alternativa estável usa a menor altura do navegador sem prender a rolagem', { skip: process.env.EDGE_TEST_STABLE !== '1' }, async () => {
+  const page = await browser.newPage({ viewport: { width: 390, height: 699 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  try {
+    await page.goto(`${url}${testQuery}`, { waitUntil: 'networkidle' });
+    await page.locator('.edge-experiment-top').waitFor();
+    const result = await page.evaluate(() => {
+      const probe = document.createElement('div');
+      probe.style.cssText = 'position:fixed;visibility:hidden;height:100svh';
+      document.body.append(probe);
+      const smallHeight = probe.getBoundingClientRect().height;
+      probe.remove();
+      return {
+        enabled: document.documentElement.classList.contains('viewport-stable-experiment'),
+        smallHeight,
+        hero: document.querySelector('#inicio').getBoundingClientRect().height,
+        minHeights: [...document.querySelectorAll('main > section:not(#inicio)')].map((section) => parseFloat(getComputedStyle(section).minHeight)),
+        snap: getComputedStyle(document.documentElement).scrollSnapType,
+      };
+    });
+    assert.equal(result.enabled, true);
+    assert.ok(Math.abs(result.hero - result.smallHeight) < 1);
+    assert.ok(result.minHeights.every((height) => Math.abs(height - result.smallHeight) < 1));
+    assert.equal(result.snap, 'none');
+  } finally { await page.close(); }
+});
+
 test('cores estabilizam nas divisões e não impedem rolagem ou toques', async () => {
   const page = await browser.newPage({ viewport: { width: 390, height: 699 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   try {
-    await page.goto(`${url}?teste-bordas=1`, { waitUntil: 'networkidle' });
+    await page.goto(`${url}${testQuery}`, { waitUntil: 'networkidle' });
     const top = page.locator('.edge-experiment-top');
     const bottom = page.locator('.edge-experiment-bottom');
     await top.waitFor();
@@ -86,7 +113,7 @@ test('cores estabilizam nas divisões e não impedem rolagem ou toques', async (
 test('seções móveis não criam uma segunda rolagem quando o conteúdo cresce', async () => {
   const page = await browser.newPage({ viewport: { width: 390, height: 699 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   try {
-    await page.goto(`${url}?teste-bordas=1`, { waitUntil: 'networkidle' });
+    await page.goto(`${url}${testQuery}`, { waitUntil: 'networkidle' });
     for (const id of ['historia', 'equipe', 'servicos', 'planos', 'unidades']) {
       const state = await page.locator(`#${id}`).evaluate((section) => ({ overflow: getComputedStyle(section).overflowY, height: section.clientHeight }));
       assert.equal(state.overflow, 'visible', `${id} não deve criar rolagem interna.`);
@@ -103,7 +130,7 @@ test('seções móveis não criam uma segunda rolagem quando o conteúdo cresce'
 test('um gesto lento continua na direção do dedo entre seções', { skip: process.env.EDGE_TEST_BROWSER === 'webkit' }, async () => {
   const page = await browser.newPage({ viewport: { width: 390, height: 699 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   try {
-    await page.goto(`${url}?teste-bordas=1`, { waitUntil: 'networkidle' });
+    await page.goto(`${url}${testQuery}`, { waitUntil: 'networkidle' });
     const input = await page.context().newCDPSession(page);
     for (const id of ['equipe', 'unidades']) {
       for (const direction of [1, -1]) {
@@ -128,7 +155,7 @@ test('um gesto lento continua na direção do dedo entre seções', { skip: proc
 test('as animações móveis não criam rolagem horizontal', async () => {
   const page = await browser.newPage({ viewport: { width: 320, height: 699 }, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
   try {
-    await page.goto(`${url}?teste-bordas=1`, { waitUntil: 'networkidle' });
+    await page.goto(`${url}${testQuery}`, { waitUntil: 'networkidle' });
     await page.locator('#equipe').evaluate((section) => section.scrollIntoView({ behavior: 'instant' }));
     await page.waitForFunction(() => document.querySelector('#equipe').classList.contains('is-revealed'));
     for (let i = 0; i < 8; i++) {
@@ -143,7 +170,7 @@ test('as seções móveis mantêm a composição ao cruzar 700px', async () => {
   for (const width of [320, 390, 430]) {
     const page = await browser.newPage({ viewport: { width, height: 699 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
     try {
-      await page.goto(`${url}?teste-bordas=1`, { waitUntil: 'networkidle' });
+      await page.goto(`${url}${testQuery}`, { waitUntil: 'networkidle' });
       await page.locator('.edge-experiment-top').waitFor();
       await page.evaluate(() => document.fonts.ready);
       let previous;
@@ -173,7 +200,7 @@ test('Onde Estamos não salta ao cruzar 700px e mantém conteúdo visível', asy
   for (const width of [320, 360, 390, 430]) {
     const page = await browser.newPage({ viewport: { width, height: 699 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
     try {
-      await page.goto(`${url}?teste-bordas=1`, { waitUntil: 'networkidle' });
+      await page.goto(`${url}${testQuery}`, { waitUntil: 'networkidle' });
       await page.locator('.edge-experiment-top').waitFor();
       await page.evaluate(() => document.fonts.ready);
       let previous;
